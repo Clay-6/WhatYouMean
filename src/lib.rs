@@ -23,7 +23,9 @@ pub fn format_defs(defs: Vec<String>) -> Vec<String> {
     let mut defs = defs;
 
     for def in defs.iter_mut() {
-        *def = def.replace("\\\"", "\"");
+        def.remove(0); // Leading "
+        *def = def.replace("\\\"", "\""); // Useless escapes
+        def.remove(def.len() - 1); // Trailing "
     }
 
     defs
