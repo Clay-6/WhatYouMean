@@ -1,12 +1,13 @@
 mod cli;
 mod utils;
 
+use anyhow::Result;
 use clap::Parser as _;
 use cli::Args;
 use utils::{format_defs, get_data, get_definitions};
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     let args = Args::parse();
 
     let data = get_data(&format!(

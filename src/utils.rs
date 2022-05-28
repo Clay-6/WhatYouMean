@@ -1,7 +1,9 @@
+use anyhow::Result;
 use serde_json::Value;
 
-pub async fn get_data(url: &str) -> Result<Value, Box<dyn std::error::Error>> {
-    let response = reqwest::get(url).await?.text().await?;
+pub async fn get_data(url: &str) -> Result<Value> {
+    let response = reqwest::get(url).await?.error_for_status()?.text().await?;
+
     let data = serde_json::from_str::<Value>(&response)?;
 
     Ok(data)
