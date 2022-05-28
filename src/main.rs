@@ -1,9 +1,9 @@
 mod cli;
-mod lib;
+mod utils;
 
 use clap::Parser as _;
 use cli::Args;
-use lib::{format_defs, get_data, get_definitions};
+use utils::{format_defs, get_data, get_definitions};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
