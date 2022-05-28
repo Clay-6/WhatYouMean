@@ -18,8 +18,8 @@ async fn main() -> Result<()> {
 
     let defs = format_defs(get_definitions(&data));
 
-    for def in defs {
-        println!("{}", def)
+    for (idx, def) in defs.iter().enumerate() {
+        println!("{}: {}", idx + 1, def)
     }
 
     Ok(())
