@@ -1,20 +1,21 @@
-use serde_json::Value;
+mod cli;
+mod lib;
+
+use clap::Parser as _;
+use cli::Args;
+use lib::{get_data, get_definitions};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let response = reqwest::get("https://api.dictionaryapi.dev/api/v2/entries/en/hello")
-        .await?
-        .text()
-        .await?;
-    let data = serde_json::from_str::<Value>(&response)?;
+    let args = Args::parse();
 
-    let meanings = &data[0]["meanings"];
-    let meanings = meanings.as_array().unwrap();
+    let data = get_data(&format!(
+        "https://api.dictionaryapi.dev/api/v2/entries/en/{}",
+        args.word
+    ))
+    .await?;
 
-    let mut defs = Vec::new();
-    for meaning in meanings {
-        defs.push(meaning["definitions"][0]["definition"].to_string())
-    }
+    let mut defs = get_definitions(&data);
 
     for def in defs.iter_mut() {
         *def = def.replace('\\', "");
