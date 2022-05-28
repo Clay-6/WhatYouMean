@@ -1,0 +1,15 @@
+[package]
+name = "whatyoumean"
+version = "0.1.0"
+edition = "2021"
+description = "A CLI dictionary"
+license = "GPL-3.0"
+authors = ["Clayman"]
+readme = "README.md"
+repository = "https://github.com/Clay-6/WhatYouMean"
+
+[[bin]]
+name = "wym"
+path = "src/main.rs"
+
+[dependencies]
