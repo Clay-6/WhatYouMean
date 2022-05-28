@@ -18,3 +18,13 @@ pub fn get_definitions(data: &Value) -> Vec<String> {
 
     defs
 }
+
+pub fn format_defs(defs: Vec<String>) -> Vec<String> {
+    let mut defs = defs;
+
+    for def in defs.iter_mut() {
+        *def = def.replace("\\\"", "\"");
+    }
+
+    defs
+}

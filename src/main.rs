@@ -3,7 +3,7 @@ mod lib;
 
 use clap::Parser as _;
 use cli::Args;
-use lib::{get_data, get_definitions};
+use lib::{format_defs, get_data, get_definitions};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -15,11 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ))
     .await?;
 
-    let mut defs = get_definitions(&data);
-
-    for def in defs.iter_mut() {
-        *def = def.replace('\\', "");
-    }
+    let defs = format_defs(get_definitions(&data));
 
     for def in defs {
         println!("{}", def)
