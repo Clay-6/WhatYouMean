@@ -4,7 +4,7 @@ mod utils;
 use anyhow::Result;
 use clap::Parser as _;
 use cli::Args;
-use utils::{format_info, get_data, get_info};
+use utils::{format_info, get_data, get_info, get_word_types};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -18,9 +18,11 @@ async fn main() -> Result<()> {
 
     let definitions = format_info(get_info(&data, "definition"));
     let examples = format_info(get_info(&data, "example"));
+    let categories = format_info(get_word_types(&data));
 
     for (i, def) in definitions.iter().enumerate() {
-        println!("{}: {}", i + 1, def);
+        println!("{} [{}]: {}", i + 1, categories[i], def);
+
         if args.show_examples {
             if examples[i] == "ul" || examples[i] == "null" {
                 println!("[No example]");

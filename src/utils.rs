@@ -32,3 +32,15 @@ pub fn format_info(defs: Vec<String>) -> Vec<String> {
 
     defs
 }
+
+pub fn get_word_types(data: &Value) -> Vec<String> {
+    let meanings = &data[0]["meanings"];
+    let meanings = meanings.as_array().unwrap();
+
+    let mut types = Vec::new();
+    for meaning in meanings {
+        types.push(meaning["partOfSpeech"].to_string())
+    }
+
+    types
+}
