@@ -21,7 +21,19 @@ pub fn get_definitions(data: &Value) -> Vec<String> {
     defs
 }
 
-pub fn format_defs(defs: Vec<String>) -> Vec<String> {
+pub fn get_examples(data: &Value) -> Vec<String> {
+    let meanings = &data[0]["meanings"];
+    let meanings = meanings.as_array().unwrap();
+
+    let mut egs = Vec::new();
+    for meaning in meanings {
+        egs.push(meaning["definitions"][0]["example"].to_string());
+    }
+
+    egs
+}
+
+pub fn format_info(defs: Vec<String>) -> Vec<String> {
     let mut defs = defs;
 
     for def in defs.iter_mut() {
