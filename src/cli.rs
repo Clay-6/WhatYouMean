@@ -7,8 +7,7 @@ use clap::Parser;
 pub struct Args {
     /// The word to define
     pub word: String,
-    /// Whether or not to show example usages
-    /// alongside the definitions
+    /// Show example usage alongside the definitions
     #[clap(short = 'e', long)]
     pub show_examples: bool,
     /// The language to use for the query.
@@ -16,8 +15,7 @@ pub struct Args {
     /// (`en_GB` & `en_US`)
     #[clap(short, long = "lang", default_value_t = Language::GB)]
     pub lang_code: Language,
-    /// Whether to remove the word categories from
-    /// the output
+    /// Remove the definition types from the output
     #[clap(long)]
     pub no_types: bool,
 }
