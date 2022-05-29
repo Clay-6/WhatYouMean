@@ -16,25 +16,19 @@ async fn main() -> Result<()> {
     ))
     .await?;
 
-    let defs = format_info(get_info(&data, "definition"));
+    let definitions = format_info(get_info(&data, "definition"));
+    let examples = format_info(get_info(&data, "example"));
 
-    if args.show_examples {
-        let examples = format_info(get_info(&data, "example"));
-
-        for (idx, def) in defs.iter().enumerate() {
-            println!("{}: {}", idx + 1, def);
-
-            let example = &examples[idx];
-            if example == "null" || example == "ul" {
+    for (i, def) in definitions.iter().enumerate() {
+        println!("{}: {}", i + 1, def);
+        if args.show_examples {
+            if examples[i] == "ul" || examples[i] == "null" {
                 println!("[No example]");
             } else {
-                println!("e.g: {}", example);
+                println!("e.g: {}", examples[i]);
             }
         }
-    } else {
-        for (idx, def) in defs.iter().enumerate() {
-            println!("{}: {}", idx + 1, def)
-        }
     }
+
     Ok(())
 }
