@@ -11,6 +11,9 @@ pub struct Args {
     /// alongside the definitions
     #[clap(short = 'e', long)]
     pub show_examples: bool,
+    /// The language to use for the query.
+    /// Currently only `en`  variants are available
+    /// (`en_GB` & `en_US`)
     #[clap(short, long = "lang", default_value_t = Language::GB)]
     pub lang_code: Language,
 }
