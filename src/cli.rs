@@ -16,6 +16,10 @@ pub struct Args {
     /// (`en_GB` & `en_US`)
     #[clap(short, long = "lang", default_value_t = Language::GB)]
     pub lang_code: Language,
+    /// Whether to remove the word categories from
+    /// the output
+    #[clap(long)]
+    pub no_types: bool,
 }
 
 #[derive(Debug)]

@@ -21,7 +21,11 @@ async fn main() -> Result<()> {
     let categories = format_info(get_word_types(&data));
 
     for (i, def) in definitions.iter().enumerate() {
-        println!("{} [{}]: {}", i + 1, categories[i], def);
+        if args.no_types {
+            println!("{}: {}", i + 1, def);
+        } else {
+            println!("{} [{}]: {}", i + 1, categories[i], def);
+        }
 
         if args.show_examples {
             if examples[i] == "ul" || examples[i] == "null" {
