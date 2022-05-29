@@ -9,28 +9,16 @@ pub async fn get_data(url: &str) -> Result<Value> {
     Ok(data)
 }
 
-pub fn get_definitions(data: &Value) -> Vec<String> {
+pub fn get_info(data: &Value, key: &str) -> Vec<String> {
     let meanings = &data[0]["meanings"];
     let meanings = meanings.as_array().unwrap();
 
-    let mut defs = Vec::new();
+    let mut info = Vec::new();
     for meaning in meanings {
-        defs.push(meaning["definitions"][0]["definition"].to_string())
+        info.push(meaning["definitions"][0][key].to_string())
     }
 
-    defs
-}
-
-pub fn get_examples(data: &Value) -> Vec<String> {
-    let meanings = &data[0]["meanings"];
-    let meanings = meanings.as_array().unwrap();
-
-    let mut egs = Vec::new();
-    for meaning in meanings {
-        egs.push(meaning["definitions"][0]["example"].to_string());
-    }
-
-    egs
+    info
 }
 
 pub fn format_info(defs: Vec<String>) -> Vec<String> {
