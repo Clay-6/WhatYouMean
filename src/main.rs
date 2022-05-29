@@ -11,8 +11,8 @@ async fn main() -> Result<()> {
     let args = Args::parse();
 
     let data = get_data(&format!(
-        "https://api.dictionaryapi.dev/api/v2/entries/en/{}",
-        args.word
+        "https://api.dictionaryapi.dev/api/v2/entries/en_{}/{}",
+        args.lang_code, args.word
     ))
     .await?;
 
