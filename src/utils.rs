@@ -54,9 +54,9 @@ pub fn print_defs(
 ) {
     for (i, def) in definitions.iter().enumerate() {
         if args.no_types {
-            println!("{}: {}", i + 1, def);
+            println!("{}. {}", i + 1, def);
         } else {
-            println!("{} [{}]: {}", i + 1, categories[i], def);
+            println!("{}. {} - {}", i + 1, categories[i], def);
         }
 
         if args.show_examples {
@@ -77,12 +77,12 @@ pub fn print_defs_colour(
 ) {
     for (i, def) in definitions.iter().enumerate() {
         if args.no_types {
-            println!("{} {}", format!("{}.", i + 1).purple().bold(), def);
+            println!("{} {}", format!("{}.", i + 1).cyan().bold(), def);
         } else {
             println!(
                 "{} {} - {}",
-                format!("{}.", i + 1).purple().bold(),
-                categories[i].purple(),
+                format!("{}.", i + 1).cyan().bold(),
+                categories[i].bright_purple(),
                 def
             );
         }
