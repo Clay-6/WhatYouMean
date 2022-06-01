@@ -18,6 +18,9 @@ pub struct Args {
     /// Remove the definition types from the output
     #[clap(long)]
     pub no_types: bool,
+    /// Disable coloured output
+    #[clap(long)]
+    pub no_colour: bool,
 }
 
 #[derive(Debug)]

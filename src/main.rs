@@ -4,7 +4,7 @@ mod utils;
 use anyhow::Result;
 use clap::Parser as _;
 use cli::Args;
-use utils::{format_info, get_data, get_info, get_word_types, print_defs};
+use utils::*;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -20,7 +20,11 @@ async fn main() -> Result<()> {
     let examples = format_info(get_info(&data, "example"));
     let categories = format_info(get_word_types(&data));
 
-    print_defs(definitions, categories, examples, &args);
+    if !args.no_colour {
+        print_defs_colour(definitions, categories, examples, &args)
+    } else {
+        print_defs(definitions, categories, examples, &args);
+    }
 
     Ok(())
 }

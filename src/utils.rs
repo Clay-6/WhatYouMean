@@ -1,4 +1,5 @@
 use anyhow::Result;
+use colored::Colorize as _;
 use serde_json::Value;
 
 pub async fn get_data(url: &str) -> Result<Value> {
@@ -63,6 +64,34 @@ pub fn print_defs(
                 println!("[No example]");
             } else {
                 println!("e.g: {}", examples[i]);
+            }
+        }
+    }
+}
+
+pub fn print_defs_colour(
+    definitions: Vec<String>,
+    categories: Vec<String>,
+    examples: Vec<String>,
+    args: &crate::cli::Args,
+) {
+    for (i, def) in definitions.iter().enumerate() {
+        if args.no_types {
+            println!("{} {}", format!("{}.", i + 1).purple().bold(), def);
+        } else {
+            println!(
+                "{} {} - {}",
+                format!("{}.", i + 1).purple().bold(),
+                categories[i].purple(),
+                def
+            );
+        }
+
+        if args.show_examples {
+            if examples[i] == "ul" || examples[i] == "null" {
+                println!("{}", "[No example]".red().italic());
+            } else {
+                println!("{}", format!("e.g: {}", examples[i]).green().italic());
             }
         }
     }
