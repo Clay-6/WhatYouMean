@@ -44,3 +44,26 @@ pub fn get_word_types(data: &Value) -> Vec<String> {
 
     types
 }
+
+pub fn print_defs(
+    definitions: Vec<String>,
+    categories: Vec<String>,
+    examples: Vec<String>,
+    args: &crate::cli::Args,
+) {
+    for (i, def) in definitions.iter().enumerate() {
+        if args.no_types {
+            println!("{}: {}", i + 1, def);
+        } else {
+            println!("{} [{}]: {}", i + 1, categories[i], def);
+        }
+
+        if args.show_examples {
+            if examples[i] == "ul" || examples[i] == "null" {
+                println!("[No example]");
+            } else {
+                println!("e.g: {}", examples[i]);
+            }
+        }
+    }
+}
