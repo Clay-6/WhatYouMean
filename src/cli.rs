@@ -21,6 +21,9 @@ pub struct Args {
     /// Disable coloured output
     #[clap(long)]
     pub no_colour: bool,
+    /// Display the word's phonetic form for its pronounciation
+    #[clap(short, long)]
+    pub phonetic: bool,
 }
 
 #[derive(Debug)]
