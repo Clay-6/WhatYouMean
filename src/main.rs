@@ -20,6 +20,9 @@ async fn main() -> Result<()> {
     let examples = format_info(get_info(&data, "example"));
     let categories = format_info(get_word_types(&data));
 
+    let phonetics = get_phonetic(&data);
+    println!("{phonetics}");
+
     if !args.no_colour {
         print_defs_colour(definitions, categories, examples, &args)
     } else {

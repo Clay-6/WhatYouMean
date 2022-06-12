@@ -22,6 +22,17 @@ pub fn get_info(data: &Value, key: &str) -> Vec<String> {
     info
 }
 
+pub fn get_phonetic(data: &Value) -> String {
+    let phonetic = &data[0]["phonetics"][1]["text"];
+    let mut formatted = phonetic.to_string();
+
+    formatted.remove(0);
+    formatted = formatted.replace("\\\"", "\"");
+    formatted.remove(formatted.len() - 1);
+
+    formatted
+}
+
 pub fn format_info(defs: Vec<String>) -> Vec<String> {
     let mut defs = defs;
 
