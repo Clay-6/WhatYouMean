@@ -61,8 +61,13 @@ pub fn print_defs(
     definitions: Vec<String>,
     categories: Vec<String>,
     examples: Vec<String>,
+    phonetics: Option<String>,
     args: &crate::cli::Args,
 ) {
+    if let Some(ref phonetic) = phonetics {
+        println!("{}\n", phonetic);
+    }
+
     for (i, def) in definitions.iter().enumerate() {
         if args.no_types {
             println!("{}. {}", i + 1, def);
@@ -84,8 +89,13 @@ pub fn print_defs_colour(
     definitions: Vec<String>,
     categories: Vec<String>,
     examples: Vec<String>,
+    phonetics: Option<String>,
     args: &crate::cli::Args,
 ) {
+    if let Some(ref phonetic) = phonetics {
+        println!("{}\n", phonetic.yellow())
+    }
+
     for (i, def) in definitions.iter().enumerate() {
         if args.no_types {
             println!("{} {}", format!("{}.", i + 1).cyan().bold(), def);
