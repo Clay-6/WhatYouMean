@@ -22,15 +22,18 @@ pub fn get_info(data: &Value, key: &str) -> Vec<String> {
     info
 }
 
-pub fn get_phonetic(data: &Value) -> String {
-    let phonetic = &data[0]["phonetics"][1]["text"];
-    let mut formatted = phonetic.to_string();
+pub fn get_phonetics(data: &Value) -> Vec<String> {
+    let mut phonetics = Vec::new();
+    let array = data[0]["phonetics"].as_array().unwrap();
 
-    formatted.remove(0);
-    formatted = formatted.replace("\\\"", "\"");
-    formatted.remove(formatted.len() - 1);
+    for phonetic in array {
+        let val = &phonetic["text"];
+        if !val.is_null() {
+            phonetics.push(val.to_string());
+        }
+    }
 
-    formatted
+    phonetics
 }
 
 pub fn format_info(defs: Vec<String>) -> Vec<String> {
@@ -61,11 +64,19 @@ pub fn print_defs(
     definitions: Vec<String>,
     categories: Vec<String>,
     examples: Vec<String>,
-    phonetics: Option<String>,
+    phonetics: Option<Vec<String>>,
     args: &crate::cli::Args,
 ) {
     if let Some(ref phonetic) = phonetics {
-        println!("{}\n", phonetic);
+        if phonetic.is_empty() {
+            println!("No phonetics available");
+        } else {
+            print!("{}", phonetic[0]);
+            for p in phonetic.iter().skip(1) {
+                print!(", {}", p);
+            }
+            println!("\n");
+        }
     }
 
     for (i, def) in definitions.iter().enumerate() {
@@ -89,11 +100,19 @@ pub fn print_defs_colour(
     definitions: Vec<String>,
     categories: Vec<String>,
     examples: Vec<String>,
-    phonetics: Option<String>,
+    phonetics: Option<Vec<String>>,
     args: &crate::cli::Args,
 ) {
     if let Some(ref phonetic) = phonetics {
-        println!("{}\n", phonetic.yellow())
+        if phonetic.is_empty() {
+            println!("{}", "No phonetics available".red())
+        } else {
+            print!("{}", phonetic[0].bright_yellow());
+            for p in phonetic.iter().skip(1) {
+                print!(", {}", p.bright_yellow())
+            }
+        }
+        println!("\n");
     }
 
     for (i, def) in definitions.iter().enumerate() {

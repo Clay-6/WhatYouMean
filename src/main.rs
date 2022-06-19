@@ -20,7 +20,7 @@ async fn main() -> Result<()> {
     let examples = format_info(get_info(&data, "example"));
     let categories = format_info(get_word_types(&data));
     let phonetic = if args.phonetic {
-        Some(get_phonetic(&data))
+        Some(get_phonetics(&data))
     } else {
         None
     };
