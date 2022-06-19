@@ -28,8 +28,12 @@ pub fn get_phonetics(data: &Value) -> Vec<String> {
 
     for phonetic in array {
         let val = &phonetic["text"];
+
         if !val.is_null() {
-            phonetics.push(val.to_string());
+            let mut formatted = val.to_string();
+            formatted.remove(0);
+            formatted.remove(formatted.len() - 1);
+            phonetics.push(formatted);
         }
     }
 
@@ -69,14 +73,14 @@ pub fn print_defs(
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
-            println!("No phonetics available");
+            println!("[No phonetics available]");
         } else {
             print!("{}", phonetic[0]);
             for p in phonetic.iter().skip(1) {
                 print!(", {}", p);
             }
-            println!("\n");
         }
+        println!("\n");
     }
 
     for (i, def) in definitions.iter().enumerate() {
@@ -105,7 +109,7 @@ pub fn print_defs_colour(
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
-            println!("{}", "No phonetics available".red())
+            println!("{}", "[No phonetics available]".red().italic())
         } else {
             print!("{}", phonetic[0].bright_yellow());
             for p in phonetic.iter().skip(1) {
