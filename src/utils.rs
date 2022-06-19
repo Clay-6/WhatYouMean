@@ -19,7 +19,7 @@ pub fn get_info(data: &Value, key: &str) -> Vec<String> {
         info.push(meaning["definitions"][0][key].to_string())
     }
 
-    info
+    format_info(info)
 }
 
 pub fn get_phonetics(data: &Value) -> Vec<String> {
@@ -40,7 +40,7 @@ pub fn get_phonetics(data: &Value) -> Vec<String> {
     phonetics
 }
 
-pub fn format_info(defs: Vec<String>) -> Vec<String> {
+fn format_info(defs: Vec<String>) -> Vec<String> {
     let mut defs = defs;
 
     for def in defs.iter_mut() {
@@ -61,7 +61,7 @@ pub fn get_word_types(data: &Value) -> Vec<String> {
         types.push(meaning["partOfSpeech"].to_string())
     }
 
-    types
+    format_info(types)
 }
 
 pub fn print_defs(
