@@ -33,6 +33,7 @@ pub fn get_phonetics(data: &Value) -> Vec<String> {
             let mut formatted = val.to_string();
             formatted.remove(0);
             formatted.remove(formatted.len() - 1);
+            formatted = formatted.replace('[', "/").replace(']', "/");
             phonetics.push(formatted);
         }
     }
