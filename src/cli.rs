@@ -5,8 +5,8 @@ pub struct Args {
     /// The word to define
     pub word: String,
     /// Show example usage alongside the definitions
-    #[clap(short = 'e', long)]
-    pub show_examples: bool,
+    #[clap(short, long)]
+    pub examples: bool,
     /// Remove the definition types from the output
     #[clap(long)]
     pub no_types: bool,

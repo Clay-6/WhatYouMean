@@ -75,7 +75,7 @@ pub fn print_defs(
             println!("{}. {} - {}", i + 1, categories[i], def);
         }
 
-        if args.show_examples {
+        if args.examples {
             if examples[i] == "ul" || examples[i] == "null" {
                 println!("[No example]");
             } else {
@@ -108,7 +108,7 @@ pub fn print_defs_colour(
             );
         }
 
-        if args.show_examples {
+        if args.examples {
             if examples[i] == "ul" || examples[i] == "null" {
                 println!("{}", "[No example]".red().italic());
             } else {
