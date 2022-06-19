@@ -73,7 +73,7 @@ pub fn print_defs(
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
-            println!("[No phonetics available]");
+            print!("[No phonetics available]");
         } else {
             print!("{}", phonetic[0]);
             for p in phonetic.iter().skip(1) {
@@ -109,7 +109,7 @@ pub fn print_defs_colour(
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
-            println!("{}", "[No phonetics available]".red().italic())
+            print!("{}", "[No phonetics available]".red().italic())
         } else {
             print!("{}", phonetic[0].bright_yellow());
             for p in phonetic.iter().skip(1) {
