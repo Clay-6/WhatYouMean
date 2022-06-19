@@ -7,7 +7,7 @@ pub struct Args {
     /// Show example usage alongside the definitions
     #[clap(short, long)]
     pub examples: bool,
-    /// Remove the definition types from the output
+    /// Remove the word types from the definitions
     #[clap(long)]
     pub no_types: bool,
     /// Disable coloured output
