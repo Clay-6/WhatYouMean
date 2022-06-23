@@ -10,7 +10,7 @@ pub async fn get_data(url: &str) -> Result<Value> {
     Ok(data)
 }
 
-pub fn get_info(data: &Value, key: &str) -> Vec<String> {
+pub fn get_meaning(data: &Value, key: &str) -> Vec<String> {
     let meanings = &data[0]["meanings"];
     let meanings = meanings.as_array().unwrap();
 
@@ -20,6 +20,24 @@ pub fn get_info(data: &Value, key: &str) -> Vec<String> {
     }
 
     format_info(info)
+}
+
+pub fn get_related_words(data: &Value) -> (Vec<String>, Vec<String>) {
+    let meanings = &data[0]["meanings"];
+    let meanings = meanings.as_array().unwrap();
+
+    let mut synonyms = Vec::new();
+    let mut antonyms = Vec::new();
+
+    for meaning in meanings {
+        synonyms.extend(meaning["synonyms"].as_array().unwrap().iter());
+        antonyms.extend(meaning["antonyms"].as_array().unwrap().iter());
+    }
+
+    let synonyms = synonyms.iter().map(|s| s.to_string()).collect();
+    let antonyms = antonyms.iter().map(|s| s.to_string()).collect();
+
+    (synonyms, antonyms)
 }
 
 pub fn get_phonetics(data: &Value) -> Vec<String> {
@@ -70,6 +88,8 @@ pub fn print_defs(
     categories: &[String],
     examples: &[String],
     phonetics: &Option<Vec<String>>,
+    synonyms: &Option<Vec<String>>,
+    antonyms: &Option<Vec<String>>,
     args: &crate::cli::Args,
 ) {
     if let Some(ref phonetic) = phonetics {
@@ -99,6 +119,29 @@ pub fn print_defs(
             }
         }
     }
+
+    if let Some(list) = synonyms {
+        if list.is_empty() {
+            println!("[No synonyms available]")
+        } else {
+            print!("Synonyms: {}", list[0]);
+            for synonym in list.iter().skip(1) {
+                print!(", {synonym}");
+            }
+        }
+        println!();
+    }
+    if let Some(list) = antonyms {
+        if list.is_empty() {
+            println!("[No antonyms available]");
+        } else {
+            print!("Antonyms: {}", list[0]);
+            for antonym in list.iter().skip(1) {
+                print!(", {antonym}");
+            }
+        }
+        println!()
+    }
 }
 
 pub fn print_defs_colour(
@@ -106,6 +149,8 @@ pub fn print_defs_colour(
     categories: &[String],
     examples: &[String],
     phonetics: &Option<Vec<String>>,
+    synonyms: &Option<Vec<String>>,
+    antonyms: &Option<Vec<String>>,
     args: &crate::cli::Args,
 ) {
     if let Some(ref phonetic) = phonetics {
@@ -139,5 +184,28 @@ pub fn print_defs_colour(
                 println!("{}", format!("e.g: {}", examples[i]).green().italic());
             }
         }
+    }
+
+    if let Some(list) = synonyms {
+        if list.is_empty() {
+            println!("{}", "[No synonyms available]".red().italic());
+        } else {
+            print!("{}", format!("Synonyms: {}", list[0]).cyan());
+            for synonym in list.iter().skip(1) {
+                print!("{}", format!(", {synonym}").cyan());
+            }
+        }
+        println!();
+    }
+    if let Some(list) = antonyms {
+        if list.is_empty() {
+            println!("{}", "[No antonyms available]".red().italic());
+        } else {
+            print!("{}", format!("Antonyms: {}", list[0]).magenta());
+            for antonym in list.iter().skip(1) {
+                print!("{}", format!(", {antonym}").magenta());
+            }
+        }
+        println!()
     }
 }

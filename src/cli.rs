@@ -16,4 +16,10 @@ pub struct Args {
     /// Display the word's phonetic form for its pronounciation
     #[clap(short, long)]
     pub phonetic: bool,
+    /// Display the word's synonyms
+    #[clap(short, long)]
+    pub synonyms: bool,
+    /// Display the word's antonyms
+    #[clap(short, long)]
+    pub antonyms: bool,
 }
