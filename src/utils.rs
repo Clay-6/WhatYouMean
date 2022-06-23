@@ -16,7 +16,7 @@ pub fn get_info(data: &Value, key: &str) -> Vec<String> {
 
     let mut info = Vec::new();
     for meaning in meanings {
-        info.push(meaning["definitions"][0][key].to_string())
+        info.push(meaning["definitions"][0][key].to_string());
     }
 
     format_info(info)
@@ -44,7 +44,7 @@ pub fn get_phonetics(data: &Value) -> Vec<String> {
 fn format_info(defs: Vec<String>) -> Vec<String> {
     let mut defs = defs;
 
-    for def in defs.iter_mut() {
+    for def in &mut defs {
         def.remove(0); // Leading "
         *def = def.replace("\\\"", "\""); // Useless escapes
         def.remove(def.len() - 1); // Trailing "
@@ -59,17 +59,17 @@ pub fn get_word_types(data: &Value) -> Vec<String> {
 
     let mut types = Vec::new();
     for meaning in meanings {
-        types.push(meaning["partOfSpeech"].to_string())
+        types.push(meaning["partOfSpeech"].to_string());
     }
 
     format_info(types)
 }
 
 pub fn print_defs(
-    definitions: Vec<String>,
-    categories: Vec<String>,
-    examples: Vec<String>,
-    phonetics: Option<Vec<String>>,
+    definitions: &[String],
+    categories: &[String],
+    examples: &[String],
+    phonetics: &Option<Vec<String>>,
     args: &crate::cli::Args,
 ) {
     if let Some(ref phonetic) = phonetics {
@@ -102,19 +102,19 @@ pub fn print_defs(
 }
 
 pub fn print_defs_colour(
-    definitions: Vec<String>,
-    categories: Vec<String>,
-    examples: Vec<String>,
-    phonetics: Option<Vec<String>>,
+    definitions: &[String],
+    categories: &[String],
+    examples: &[String],
+    phonetics: &Option<Vec<String>>,
     args: &crate::cli::Args,
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
-            print!("{}", "[No phonetics available]".red().italic())
+            print!("{}", "[No phonetics available]".red().italic());
         } else {
             print!("{}", phonetic[0].bright_yellow());
             for p in phonetic.iter().skip(1) {
-                print!(", {}", p.bright_yellow())
+                print!(", {}", p.bright_yellow());
             }
         }
         println!("\n");

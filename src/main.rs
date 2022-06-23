@@ -19,16 +19,16 @@ async fn main() -> Result<()> {
     let definitions = get_info(&data, "definition");
     let examples = get_info(&data, "example");
     let categories = get_word_types(&data);
-    let phonetic = if args.phonetic {
+    let phonetics = if args.phonetic {
         Some(get_phonetics(&data))
     } else {
         None
     };
 
-    if !args.no_colour {
-        print_defs_colour(definitions, categories, examples, phonetic, &args)
+    if args.no_colour {
+        print_defs(&definitions, &categories, &examples, &phonetics, &args);
     } else {
-        print_defs(definitions, categories, examples, phonetic, &args);
+        print_defs_colour(&definitions, &categories, &examples, &phonetics, &args);
     }
 
     Ok(())
