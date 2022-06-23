@@ -120,6 +120,8 @@ pub fn print_defs(
         }
     }
 
+    println!();
+
     if let Some(list) = synonyms {
         if list.is_empty() {
             println!("[No synonyms available]")
@@ -185,6 +187,8 @@ pub fn print_defs_colour(
             }
         }
     }
+
+    println!();
 
     if let Some(list) = synonyms {
         if list.is_empty() {
