@@ -8,7 +8,10 @@ use utils::*;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Args::parse();
+    let mut args = Args::parse();
+    if args.verbose {
+        args.show_all();
+    }
 
     let data = get_data(&format!(
         "https://api.dictionaryapi.dev/api/v2/entries/en/{}",

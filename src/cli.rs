@@ -22,4 +22,16 @@ pub struct Args {
     /// Display the word's antonyms
     #[clap(short, long)]
     pub antonyms: bool,
+    /// Display all available info about the word
+    #[clap(short, long)]
+    pub verbose: bool,
+}
+
+impl Args {
+    pub fn show_all(&mut self) {
+        self.examples = true;
+        self.phonetic = true;
+        self.synonyms = true;
+        self.antonyms = true;
+    }
 }
