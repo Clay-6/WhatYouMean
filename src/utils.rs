@@ -90,7 +90,8 @@ pub fn print_defs(
     phonetics: &Option<Vec<String>>,
     synonyms: &Option<Vec<String>>,
     antonyms: &Option<Vec<String>>,
-    args: &crate::cli::Args,
+    show_types: bool,
+    show_examples: bool,
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
@@ -105,13 +106,13 @@ pub fn print_defs(
     }
 
     for (i, def) in definitions.iter().enumerate() {
-        if args.no_types {
+        if !show_types {
             println!("{}. {}", i + 1, def);
         } else {
             println!("{}. {} - {}", i + 1, categories[i], def);
         }
 
-        if args.examples {
+        if show_examples {
             if examples[i] == "ul" || examples[i] == "null" {
                 println!("[No example]");
             } else {
@@ -153,7 +154,8 @@ pub fn print_defs_colour(
     phonetics: &Option<Vec<String>>,
     synonyms: &Option<Vec<String>>,
     antonyms: &Option<Vec<String>>,
-    args: &crate::cli::Args,
+    show_types: bool,
+    show_examples: bool,
 ) {
     if let Some(ref phonetic) = phonetics {
         if phonetic.is_empty() {
@@ -168,7 +170,7 @@ pub fn print_defs_colour(
     }
 
     for (i, def) in definitions.iter().enumerate() {
-        if args.no_types {
+        if !show_types {
             println!("{} {}", format!("{}.", i + 1).cyan().bold(), def);
         } else {
             println!(
@@ -179,7 +181,7 @@ pub fn print_defs_colour(
             );
         }
 
-        if args.examples {
+        if show_examples {
             if examples[i] == "ul" || examples[i] == "null" {
                 println!("{}", "[No example]".red().italic());
             } else {

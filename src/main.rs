@@ -45,7 +45,8 @@ async fn main() -> Result<()> {
             &phonetics,
             &synonyms,
             &antonyms,
-            &args,
+            !args.no_types,
+            args.examples,
         );
     } else {
         print_defs_colour(
@@ -55,7 +56,8 @@ async fn main() -> Result<()> {
             &phonetics,
             &synonyms,
             &antonyms,
-            &args,
+            !args.no_types,
+            args.examples,
         );
     }
 
