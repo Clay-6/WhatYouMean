@@ -36,16 +36,12 @@ pub fn get_phonetics(data: &Value) -> String {
     val.to_string().replace('"', "/")
 }
 
-fn format_info(defs: Vec<String>) -> Vec<String> {
-    let mut defs = defs;
+pub fn get_antonyms(data: &Value) -> Vec<String> {
+    let arr = data["antonyms"]
+        .as_array()
+        .expect("No `antonyms` JSON field found");
 
-    for def in &mut defs {
-        def.remove(0); // Leading "
-        *def = def.replace("\\\"", "\""); // Useless escapes
-        def.remove(def.len() - 1); // Trailing "
-    }
-
-    defs
+    arr.iter().map(|a| a.to_string()).collect()
 }
 
 pub fn print_defs(
@@ -167,4 +163,16 @@ pub fn print_defs_colour(
         }
         println!()
     }
+}
+
+fn format_info(defs: Vec<String>) -> Vec<String> {
+    let mut defs = defs;
+
+    for def in &mut defs {
+        def.remove(0); // Leading "
+        *def = def.replace("\\\"", "\""); // Useless escapes
+        def.remove(def.len() - 1); // Trailing "
+    }
+
+    defs
 }

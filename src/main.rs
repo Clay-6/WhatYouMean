@@ -36,7 +36,20 @@ async fn main() -> Result<()> {
     } else {
         None
     };
-    let antonyms = None;
+    let antonyms = if args.antonyms {
+        let data = get_data(
+            &format!(
+                "https://wordsapiv1.p.rapidapi.com/words/{}/antonyms",
+                args.word
+            ),
+            &api_key,
+            HOST,
+        )
+        .await?;
+        Some(get_antonyms(&data))
+    } else {
+        None
+    };
     let examples = get_info(&data, "examples");
 
     if args.no_colour {
