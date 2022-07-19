@@ -2,12 +2,17 @@ use anyhow::Result;
 use colored::Colorize as _;
 use serde_json::Value;
 
-pub async fn get_data(url: &str) -> Result<Value> {
-    let response = reqwest::get(url).await?.error_for_status()?.text().await?;
-
-    let data = serde_json::from_str::<Value>(&response)?;
-
-    Ok(data)
+pub async fn get_data(url: &str, api_key: &str, host: &str) -> Result<String> {
+    let client = reqwest::Client::new();
+    
+    Ok(client
+        .get(url)
+        .header("X-RapidAPI-Key", api_key)
+        .header("X-RapidAPI-Host", host)
+        .send()
+        .await?
+        .text()
+        .await?)
 }
 
 pub fn get_meaning(data: &Value, key: &str) -> Vec<String> {
