@@ -6,43 +6,58 @@ use clap::Parser as _;
 use cli::Args;
 use utils::*;
 
+const HOST: &str = "wordsapiv1.p.rapidapi.com";
+
 #[tokio::main]
 async fn main() -> Result<()> {
+    let api_key = std::env::var("WORDSAPI_KEY")?;
+
     let mut args = Args::parse();
     if args.verbose {
         args.show_all();
     }
 
-    let data = get_data(&format!(
-        "https://api.dictionaryapi.dev/api/v2/entries/en/{}",
-        args.word
-    ))
+    let data = get_data(
+        &format!("https://wordsapiv1.p.rapidapi.com/words/{}", args.word),
+        &api_key,
+        HOST,
+    )
     .await?;
 
-    let definitions = get_meaning(&data, "definition");
-    let examples = get_meaning(&data, "example");
-    let categories = get_word_types(&data);
-    let phonetics = if args.phonetic {
+    let defs = get_info(&data, "definition");
+    let categories = get_info(&data, "partOfSpeech");
+    let phonetic = if args.phonetic {
         Some(get_phonetics(&data))
     } else {
         None
     };
-    let (synonyms, antonyms) = match (args.synonyms, args.antonyms) {
-        (true, true) => {
-            let tuple = get_related_words(&data);
-            (Some(tuple.0), Some(tuple.1))
-        }
-        (true, false) => (Some(get_related_words(&data).0), None),
-        (false, true) => (None, Some(get_related_words(&data).1)),
-        (false, false) => (None, None),
+    let synonyms = if args.synonyms {
+        Some(get_info(&data, "synonyms"))
+    } else {
+        None
     };
+    let antonyms = if args.antonyms {
+        let data = get_data(
+            &format!(
+                "https://wordsapiv1.p.rapidapi.com/words/{}/antonyms",
+                args.word
+            ),
+            &api_key,
+            HOST,
+        )
+        .await?;
+        Some(get_antonyms(&data))
+    } else {
+        None
+    };
+    let examples = get_info(&data, "examples");
 
     if args.no_colour {
         print_defs(
-            &definitions,
+            &defs,
             &categories,
             &examples,
-            &phonetics,
+            &phonetic,
             &synonyms,
             &antonyms,
             !args.no_types,
@@ -50,10 +65,10 @@ async fn main() -> Result<()> {
         );
     } else {
         print_defs_colour(
-            &definitions,
+            &defs,
             &categories,
             &examples,
-            &phonetics,
+            &phonetic,
             &synonyms,
             &antonyms,
             !args.no_types,
