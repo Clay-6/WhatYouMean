@@ -2,26 +2,27 @@ use anyhow::Result;
 use colored::Colorize as _;
 use serde_json::Value;
 
-pub async fn get_data(url: &str, api_key: &str, host: &str) -> Result<String> {
+pub async fn get_data(url: &str, api_key: &str, host: &str) -> Result<Value> {
     let client = reqwest::Client::new();
-    
-    Ok(client
+
+    let res = client
         .get(url)
         .header("X-RapidAPI-Key", api_key)
         .header("X-RapidAPI-Host", host)
         .send()
         .await?
-        .text()
-        .await?)
+        .error_for_status()?;
+
+    Ok(serde_json::from_str(&res.text().await?)?)
 }
 
-pub fn get_meaning(data: &Value, key: &str) -> Vec<String> {
-    let meanings = &data[0]["meanings"];
+pub fn get_info(data: &Value, key: &str) -> Vec<String> {
+    let meanings = &data["results"];
     let meanings = meanings.as_array().unwrap();
 
     let mut info = Vec::new();
     for meaning in meanings {
-        info.push(meaning["definitions"][0][key].to_string());
+        info.push(meaning[key].to_string());
     }
 
     format_info(info)
@@ -45,23 +46,10 @@ pub fn get_related_words(data: &Value) -> (Vec<String>, Vec<String>) {
     (synonyms, antonyms)
 }
 
-pub fn get_phonetics(data: &Value) -> Vec<String> {
-    let mut phonetics = Vec::new();
-    let array = data[0]["phonetics"].as_array().unwrap();
+pub fn get_phonetics(data: &Value) -> String {
+    let val = &data["pronunciation"]["all"];
 
-    for phonetic in array {
-        let val = &phonetic["text"];
-
-        if !val.is_null() {
-            let mut formatted = val.to_string();
-            formatted.remove(0);
-            formatted.remove(formatted.len() - 1);
-            formatted = formatted.replace('[', "/").replace(']', "/");
-            phonetics.push(formatted);
-        }
-    }
-
-    phonetics
+    val.to_string().replace('"', "/")
 }
 
 fn format_info(defs: Vec<String>) -> Vec<String> {
@@ -77,7 +65,7 @@ fn format_info(defs: Vec<String>) -> Vec<String> {
 }
 
 pub fn get_word_types(data: &Value) -> Vec<String> {
-    let meanings = &data[0]["meanings"];
+    let meanings = &data["results"];
     let meanings = meanings.as_array().unwrap();
 
     let mut types = Vec::new();
@@ -92,22 +80,16 @@ pub fn print_defs(
     definitions: &[String],
     categories: &[String],
     examples: &[String],
-    phonetics: &Option<Vec<String>>,
+    phonetic: &Option<String>,
     synonyms: &Option<Vec<String>>,
     antonyms: &Option<Vec<String>>,
     show_types: bool,
     show_examples: bool,
 ) {
-    if let Some(ref phonetic) = phonetics {
-        if phonetic.is_empty() {
-            print!("[No phonetics available]");
-        } else {
-            print!("{}", phonetic[0]);
-            for p in phonetic.iter().skip(1) {
-                print!(", {}", p);
-            }
-        }
-        println!("\n");
+    if let Some(p) = phonetic {
+        println!("{p}")
+    } else {
+        println!("[No phonetics available]")
     }
 
     for (i, def) in definitions.iter().enumerate() {
@@ -156,22 +138,16 @@ pub fn print_defs_colour(
     definitions: &[String],
     categories: &[String],
     examples: &[String],
-    phonetics: &Option<Vec<String>>,
+    phonetic: &Option<String>,
     synonyms: &Option<Vec<String>>,
     antonyms: &Option<Vec<String>>,
     show_types: bool,
     show_examples: bool,
 ) {
-    if let Some(ref phonetic) = phonetics {
-        if phonetic.is_empty() {
-            print!("{}", "[No phonetics available]".red().italic());
-        } else {
-            print!("{}", phonetic[0].bright_yellow());
-            for p in phonetic.iter().skip(1) {
-                print!(", {}", p.bright_yellow());
-            }
-        }
-        println!("\n");
+    if let Some(p) = phonetic {
+        println!("{}", p.bright_yellow())
+    } else {
+        println!("{}", "[No phonetics available]".red().italic())
     }
 
     for (i, def) in definitions.iter().enumerate() {

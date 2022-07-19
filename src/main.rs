@@ -6,7 +6,7 @@ use clap::Parser as _;
 use cli::Args;
 use utils::*;
 
-const HOST: &str = "https://wordsapiv1.p.rapidapi.com";
+const HOST: &str = "wordsapiv1.p.rapidapi.com";
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -24,7 +24,44 @@ async fn main() -> Result<()> {
     )
     .await?;
 
-    println!("{data:?}");
+    let defs = get_info(&data, "definition");
+    let categories = get_info(&data, "partOfSpeech");
+    let phonetic = if args.phonetic {
+        Some(get_phonetics(&data))
+    } else {
+        None
+    };
+    let synonyms = if args.synonyms {
+        Some(get_info(&data, "synonyms"))
+    } else {
+        None
+    };
+    let antonyms = None;
+    let examples = get_info(&data, "examples");
+
+    if args.no_colour {
+        print_defs(
+            &defs,
+            &categories,
+            &examples,
+            &phonetic,
+            &synonyms,
+            &antonyms,
+            !args.no_types,
+            args.examples,
+        );
+    } else {
+        print_defs_colour(
+            &defs,
+            &categories,
+            &examples,
+            &phonetic,
+            &synonyms,
+            &antonyms,
+            !args.no_types,
+            args.examples,
+        );
+    }
 
     Ok(())
 }
