@@ -55,9 +55,11 @@ pub fn print_defs(
     show_examples: bool,
 ) {
     if let Some(p) = phonetic {
-        println!("{p}\n")
-    } else {
-        println!("[No phonetics available]\n")
+        if p == "ul" || p == "null" {
+            println!("[No phonetics available]\n");
+        } else {
+            println!("{p}\n")
+        }
     }
 
     for (i, def) in definitions.iter().enumerate() {
@@ -113,9 +115,11 @@ pub fn print_defs_colour(
     show_examples: bool,
 ) {
     if let Some(p) = phonetic {
-        println!("{}\n", p.bright_yellow())
-    } else {
-        println!("{}\n", "[No phonetics available]".red().italic())
+        if p == "ul" || p == "null" {
+            println!("{}\n", "[No phonetics available]".red().italic())
+        } else {
+            println!("{}\n", p.bright_yellow())
+        }
     }
 
     for (i, def) in definitions.iter().enumerate() {
