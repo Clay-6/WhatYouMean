@@ -1,3 +1,5 @@
+#![allow(clippy::too_many_arguments)]
+
 use anyhow::Result;
 use colored::Colorize as _;
 use serde_json::Value;
@@ -28,24 +30,6 @@ pub fn get_info(data: &Value, key: &str) -> Vec<String> {
     format_info(info)
 }
 
-pub fn get_related_words(data: &Value) -> (Vec<String>, Vec<String>) {
-    let meanings = &data[0]["meanings"];
-    let meanings = meanings.as_array().unwrap();
-
-    let mut synonyms = Vec::new();
-    let mut antonyms = Vec::new();
-
-    for meaning in meanings {
-        synonyms.extend(meaning["synonyms"].as_array().unwrap().iter());
-        antonyms.extend(meaning["antonyms"].as_array().unwrap().iter());
-    }
-
-    let synonyms = synonyms.iter().map(|s| s.to_string()).collect();
-    let antonyms = antonyms.iter().map(|s| s.to_string()).collect();
-
-    (synonyms, antonyms)
-}
-
 pub fn get_phonetics(data: &Value) -> String {
     let val = &data["pronunciation"]["all"];
 
@@ -62,18 +46,6 @@ fn format_info(defs: Vec<String>) -> Vec<String> {
     }
 
     defs
-}
-
-pub fn get_word_types(data: &Value) -> Vec<String> {
-    let meanings = &data["results"];
-    let meanings = meanings.as_array().unwrap();
-
-    let mut types = Vec::new();
-    for meaning in meanings {
-        types.push(meaning["partOfSpeech"].to_string());
-    }
-
-    format_info(types)
 }
 
 pub fn print_defs(
