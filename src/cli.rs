@@ -25,6 +25,10 @@ pub struct Args {
     /// Display all available info about the word
     #[clap(short, long)]
     pub verbose: bool,
+    /// The maximum amount of definitions to display.
+    /// Defaults to showing all available ones
+    #[clap(short, long)]
+    pub max: Option<usize>,
 }
 
 impl Args {

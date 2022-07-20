@@ -62,6 +62,7 @@ async fn main() -> Result<()> {
             &antonyms,
             !args.no_types,
             args.examples,
+            args.max.unwrap_or(usize::MAX),
         );
     } else {
         print_defs_colour(
@@ -73,6 +74,7 @@ async fn main() -> Result<()> {
             &antonyms,
             !args.no_types,
             args.examples,
+            args.max.unwrap_or(usize::MAX),
         );
     }
 

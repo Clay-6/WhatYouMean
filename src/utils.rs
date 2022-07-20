@@ -53,6 +53,7 @@ pub fn print_defs(
     antonyms: &Option<Vec<String>>,
     show_types: bool,
     show_examples: bool,
+    max: usize,
 ) {
     if let Some(p) = phonetic {
         if p == "ul" || p == "null" {
@@ -62,7 +63,7 @@ pub fn print_defs(
         }
     }
 
-    for (i, def) in definitions.iter().enumerate() {
+    for (i, def) in definitions.iter().take(max).enumerate() {
         if !show_types {
             println!("{}. {}", i + 1, def);
         } else {
@@ -117,6 +118,7 @@ pub fn print_defs_colour(
     antonyms: &Option<Vec<String>>,
     show_types: bool,
     show_examples: bool,
+    max: usize,
 ) {
     if let Some(p) = phonetic {
         if p == "ul" || p == "null" {
@@ -126,7 +128,7 @@ pub fn print_defs_colour(
         }
     }
 
-    for (i, def) in definitions.iter().enumerate() {
+    for (i, def) in definitions.iter().take(max).enumerate() {
         if !show_types {
             println!("{} {}", format!("{}.", i + 1).cyan().bold(), def);
         } else {
