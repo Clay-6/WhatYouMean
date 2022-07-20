@@ -56,7 +56,7 @@ pub fn print_defs(
 ) {
     if let Some(p) = phonetic {
         if p == "ul" || p == "null" {
-            println!("[No phonetics available]\n");
+            println!("[No phonetic available]\n");
         } else {
             println!("{p}\n")
         }
@@ -86,7 +86,9 @@ pub fn print_defs(
         } else {
             print!("Synonyms: {}", list[0]);
             for synonym in list.iter().skip(1) {
-                print!(", {synonym}");
+                if synonym != "ul" && synonym != "null" {
+                    print!(", {synonym}");
+                }
             }
         }
         println!();
@@ -97,7 +99,9 @@ pub fn print_defs(
         } else {
             print!("Antonyms: {}", list[0]);
             for antonym in list.iter().skip(1) {
-                print!(", {antonym}");
+                if antonym != "ul" && antonym != "null" {
+                    print!(", {antonym}");
+                }
             }
         }
         println!()
@@ -116,7 +120,7 @@ pub fn print_defs_colour(
 ) {
     if let Some(p) = phonetic {
         if p == "ul" || p == "null" {
-            println!("{}\n", "[No phonetics available]".red().italic())
+            println!("{}\n", "[No phonetic available]".red().italic())
         } else {
             println!("{}\n", p.bright_yellow())
         }
@@ -151,7 +155,9 @@ pub fn print_defs_colour(
         } else {
             print!("{}", format!("Synonyms: {}", list[0]).cyan());
             for synonym in list.iter().skip(1) {
-                print!("{}", format!(", {synonym}").cyan());
+                if synonym != "ul" && synonym != "null" {
+                    print!("{}", format!(", {synonym}").cyan());
+                }
             }
         }
         println!();
@@ -162,7 +168,9 @@ pub fn print_defs_colour(
         } else {
             print!("{}", format!("Antonyms: {}", list[0]).magenta());
             for antonym in list.iter().skip(1) {
-                print!("{}", format!(", {antonym}").magenta());
+                if antonym != "ul" && antonym != "null" {
+                    print!("{}", format!(", {antonym}").magenta());
+                }
             }
         }
         println!()
