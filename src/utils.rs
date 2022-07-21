@@ -1,6 +1,6 @@
 #![allow(clippy::too_many_arguments)]
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use colored::Colorize as _;
 use serde_json::Value;
 
@@ -18,16 +18,19 @@ pub async fn get_data(url: &str, api_key: &str, host: &str) -> Result<Value> {
     Ok(serde_json::from_str(&res.text().await?)?)
 }
 
-pub fn get_info(data: &Value, key: &str) -> Vec<String> {
+pub fn get_info(data: &Value, key: &str) -> Result<Vec<String>> {
     let meanings = &data["results"];
-    let meanings = meanings.as_array().unwrap();
+    let meanings = match meanings.as_array() {
+        Some(m) => m,
+        None => bail!(format!("No {key} info found for that word")),
+    };
 
     let mut info = Vec::new();
     for meaning in meanings {
         info.push(meaning[key].to_string());
     }
 
-    format_info(info)
+    Ok(format_info(info))
 }
 
 pub fn get_phonetics(data: &Value) -> String {

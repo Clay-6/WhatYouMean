@@ -24,15 +24,15 @@ async fn main() -> Result<()> {
     )
     .await?;
 
-    let defs = get_info(&data, "definition");
-    let categories = get_info(&data, "partOfSpeech");
+    let defs = get_info(&data, "definition")?;
+    let categories = get_info(&data, "partOfSpeech")?;
     let phonetic = if args.phonetic {
         Some(get_phonetics(&data))
     } else {
         None
     };
     let synonyms = if args.synonyms {
-        Some(get_info(&data, "synonyms"))
+        Some(get_info(&data, "synonyms")?)
     } else {
         None
     };
@@ -50,7 +50,7 @@ async fn main() -> Result<()> {
     } else {
         None
     };
-    let examples = get_info(&data, "examples");
+    let examples = get_info(&data, "examples")?;
 
     if args.no_colour {
         print_defs(
