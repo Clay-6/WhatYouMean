@@ -25,7 +25,16 @@ async fn main() -> Result<()> {
     .await?;
 
     let defs = get_info(&data, "definition")?;
-    let categories = get_info(&data, "partOfSpeech")?;
+    let categories = get_info(&data, "partOfSpeech")?
+        .iter()
+        .map(|t| {
+            if t == "ul" || t == "null" {
+                "jargon".to_string()
+            } else {
+                t.clone()
+            }
+        })
+        .collect::<Vec<String>>();
     let phonetic = if args.phonetic {
         Some(get_phonetics(&data))
     } else {
