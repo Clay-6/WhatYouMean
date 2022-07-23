@@ -187,7 +187,7 @@ fn format_info(defs: Vec<String>) -> Vec<String> {
 
     for def in &mut defs {
         def.remove(0); // Leading "
-        *def = def.replace("\\\"", "\""); // Useless escapes
+        *def = def.replace(r#"\""#, r#"""#); // Useless escapes
         def.remove(def.len() - 1); // Trailing "
     }
 

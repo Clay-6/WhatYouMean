@@ -28,7 +28,7 @@ async fn main() -> Result<()> {
     let categories = get_info(&data, "partOfSpeech")?
         .iter()
         .map(|t| {
-            if t == "ul" || t == "null" {
+            if t == "ul" {
                 "jargon".to_string()
             } else {
                 t.clone()
