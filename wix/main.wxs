@@ -62,7 +62,7 @@
     <Product
         Id='*'
         Name='whatyoumean'
-        UpgradeCode='CF08BAF5-55CC-4C6D-9914-2B94D935B3CF'
+        UpgradeCode='5222206B-BFB2-41C2-97EC-69EF58D7B345'
         Manufacturer='Clayman'
         Language='1033'
         Codepage='1252'
@@ -105,7 +105,7 @@
                     </Component>
                     
                     <Directory Id='Bin' Name='bin'>
-                        <Component Id='Path' Guid='8BBF7702-614D-4D64-845C-0EE5D4D5A398' KeyPath='yes'>
+                        <Component Id='Path' Guid='C6317EC1-829A-4BF4-B3D3-BE4C039665C4' KeyPath='yes'>
                             <Environment
                                 Id='PATH'
                                 Name='PATH'
