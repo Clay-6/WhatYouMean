@@ -3,7 +3,7 @@ use clap::Parser;
 #[clap(author, version, about)]
 pub struct Args {
     /// The word to define
-    pub word: String,
+    pub word: Option<String>,
     /// Show example usage alongside the definitions
     #[clap(short, long)]
     pub examples: bool,
@@ -29,6 +29,9 @@ pub struct Args {
     /// Defaults to showing all available ones
     #[clap(short, long)]
     pub max: Option<usize>,
+    /// Get info for a random word
+    #[clap(short = 'R', long)]
+    pub random: bool,
 }
 
 impl Args {

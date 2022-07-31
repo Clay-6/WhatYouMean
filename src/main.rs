@@ -4,6 +4,8 @@ mod utils;
 use anyhow::Result;
 use clap::Parser as _;
 use cli::Args;
+use colored::Colorize as _;
+use serde_json::Value;
 use utils::*;
 
 const HOST: &str = "wordsapiv1.p.rapidapi.com";
@@ -17,15 +19,45 @@ async fn main() -> Result<()> {
         args.show_all();
     }
 
-    let data = get_data(
-        &format!("https://wordsapiv1.p.rapidapi.com/words/{}", args.word),
-        &api_key,
-        HOST,
-    )
-    .await?;
+    if args.random {
+        let data = get_data(
+            "https://wordsapiv1.p.rapidapi.com/words/",
+            &api_key,
+            HOST,
+            true,
+        )
+        .await?;
+        let mut word = data["word"].to_string();
+        word.remove(0);
+        word.remove(word.len() - 1);
 
-    let defs = get_info(&data, "definition")?;
-    let categories = get_info(&data, "partOfSpeech")?
+        println!(
+            "Got {}",
+            if args.no_colour {
+                word.clone()
+            } else {
+                word.purple().to_string()
+            }
+        );
+
+        show_data(&data, &args, &word, &api_key).await
+    } else {
+        let word = args.word.as_ref().expect("No word supplied to define");
+        let data = get_data(
+            &format!("https://wordsapiv1.p.rapidapi.com/words/{}", word),
+            &api_key,
+            HOST,
+            false,
+        )
+        .await?;
+
+        show_data(&data, &args, word, &api_key).await
+    }
+}
+
+async fn show_data(data: &Value, args: &Args, word: &str, api_key: &str) -> Result<()> {
+    let defs = get_info(data, "definition")?;
+    let categories = get_info(data, "partOfSpeech")?
         .iter()
         .map(|t| {
             if t == "ul" {
@@ -36,30 +68,28 @@ async fn main() -> Result<()> {
         })
         .collect::<Vec<String>>();
     let phonetic = if args.phonetic {
-        Some(get_phonetics(&data))
+        Some(get_phonetics(data))
     } else {
         None
     };
     let synonyms = if args.synonyms {
-        Some(get_info(&data, "synonyms")?)
+        Some(get_info(data, "synonyms")?)
     } else {
         None
     };
     let antonyms = if args.antonyms {
         let data = get_data(
-            &format!(
-                "https://wordsapiv1.p.rapidapi.com/words/{}/antonyms",
-                args.word
-            ),
-            &api_key,
+            &format!("https://wordsapiv1.p.rapidapi.com/words/{}/antonyms", word),
+            api_key,
             HOST,
+            false,
         )
         .await?;
         Some(get_antonyms(&data))
     } else {
         None
     };
-    let examples = get_info(&data, "examples")?;
+    let examples = get_info(data, "examples")?;
 
     if args.no_colour {
         print_defs(

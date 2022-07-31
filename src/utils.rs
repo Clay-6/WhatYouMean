@@ -4,13 +4,14 @@ use anyhow::{bail, Result};
 use colored::Colorize as _;
 use serde_json::Value;
 
-pub async fn get_data(url: &str, api_key: &str, host: &str) -> Result<Value> {
+pub async fn get_data(url: &str, api_key: &str, host: &str, random: bool) -> Result<Value> {
     let client = reqwest::Client::new();
 
     let res = client
         .get(url)
         .header("X-RapidAPI-Key", api_key)
         .header("X-RapidAPI-Host", host)
+        .query(&[("random", random.to_string())])
         .send()
         .await?
         .error_for_status()?;
