@@ -73,7 +73,13 @@ async fn show_data(data: &Value, args: &Args, word: &str, api_key: &str) -> Resu
         None
     };
     let synonyms = if args.synonyms {
-        Some(get_info(data, "synonyms")?)
+        Some(
+            get_info(data, "synonyms")?
+                .iter()
+                .filter(|s| *s != "ul" && *s != "null")
+                .cloned()
+                .collect(),
+        )
     } else {
         None
     };

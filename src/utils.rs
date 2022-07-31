@@ -45,7 +45,10 @@ pub fn get_antonyms(data: &Value) -> Vec<String> {
         .as_array()
         .expect("No `antonyms` JSON field found");
 
-    arr.iter().map(|a| a.to_string()).collect()
+    arr.iter()
+        .map(|a| a.to_string())
+        .filter(|a| a != "null" && a != "ul")
+        .collect()
 }
 
 pub fn print_defs(
@@ -87,7 +90,7 @@ pub fn print_defs(
 
     if let Some(list) = synonyms {
         if list.is_empty() {
-            println!("[No synonyms available]")
+            print!("[No synonyms available]")
         } else {
             print!("Synonyms: {}", list[0]);
             for synonym in list.iter().skip(1) {
@@ -100,7 +103,7 @@ pub fn print_defs(
     }
     if let Some(list) = antonyms {
         if list.is_empty() {
-            println!("[No antonyms available]");
+            print!("[No antonyms available]");
         } else {
             print!("Antonyms: {}", list[0]);
             for antonym in list.iter().skip(1) {
@@ -157,7 +160,7 @@ pub fn print_defs_colour(
 
     if let Some(list) = synonyms {
         if list.is_empty() {
-            println!("{}", "[No synonyms available]".red().italic());
+            print!("{}", "[No synonyms available]".red().italic());
         } else {
             print!("{}", format!("Synonyms: {}", list[0]).cyan());
             for synonym in list.iter().skip(1) {
@@ -170,7 +173,7 @@ pub fn print_defs_colour(
     }
     if let Some(list) = antonyms {
         if list.is_empty() {
-            println!("{}", "[No antonyms available]".red().italic());
+            print!("{}", "[No antonyms available]".red().italic());
         } else {
             print!("{}", format!("Antonyms: {}", list[0]).magenta());
             for antonym in list.iter().skip(1) {
@@ -183,9 +186,7 @@ pub fn print_defs_colour(
     }
 }
 
-fn format_info(defs: Vec<String>) -> Vec<String> {
-    let mut defs = defs;
-
+fn format_info(mut defs: Vec<String>) -> Vec<String> {
     for def in &mut defs {
         def.remove(0); // Leading "
         *def = def.replace(r#"\""#, r#"""#); // Useless escapes
