@@ -18,9 +18,11 @@ async fn main() -> Result<()> {
     if args.verbose {
         args.show_all();
     }
+    let client = reqwest::Client::new();
 
     if args.random {
         let data = get_data(
+            &client,
             "https://wordsapiv1.p.rapidapi.com/words/",
             &api_key,
             HOST,
@@ -40,10 +42,11 @@ async fn main() -> Result<()> {
             }
         );
 
-        show_data(&data, &args, &word, &api_key).await
+        show_data(client, &data, &args, &word, &api_key).await
     } else {
         let word = args.word.as_ref().expect("No word supplied to define");
         let data = get_data(
+            &client,
             &format!("https://wordsapiv1.p.rapidapi.com/words/{}", word),
             &api_key,
             HOST,
@@ -51,11 +54,17 @@ async fn main() -> Result<()> {
         )
         .await?;
 
-        show_data(&data, &args, word, &api_key).await
+        show_data(client, &data, &args, word, &api_key).await
     }
 }
 
-async fn show_data(data: &Value, args: &Args, word: &str, api_key: &str) -> Result<()> {
+async fn show_data(
+    client: reqwest::Client,
+    data: &Value,
+    args: &Args,
+    word: &str,
+    api_key: &str,
+) -> Result<()> {
     let defs = get_info(data, "definition")?;
     let categories = get_info(data, "partOfSpeech")?
         .iter()
@@ -85,6 +94,7 @@ async fn show_data(data: &Value, args: &Args, word: &str, api_key: &str) -> Resu
     };
     let antonyms = if args.antonyms {
         let data = get_data(
+            &client,
             &format!("https://wordsapiv1.p.rapidapi.com/words/{}/antonyms", word),
             api_key,
             HOST,
