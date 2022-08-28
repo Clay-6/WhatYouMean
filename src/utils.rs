@@ -38,10 +38,20 @@ pub fn get_info(data: &Value, key: &str) -> Result<Vec<String>> {
     Ok(format_info(info))
 }
 
-pub fn get_phonetics(data: &Value) -> String {
-    let val = &data["pronunciation"]["all"];
+pub fn get_phonetics(data: &Value) -> Vec<String> {
+    let val = if data["pronunciation"]["all"] != Value::Null {
+        vec![data["pronunciation"]["all"].to_string()]
+    } else {
+        data["pronunciation"]
+            .as_object()
+            .unwrap()
+            .values()
+            .filter(|v| !v.is_null())
+            .map(|v| v.to_string())
+            .collect::<Vec<String>>()
+    };
 
-    val.to_string().replace('"', "/")
+    val.iter().map(|p| p.replace('"', "/")).collect()
 }
 
 pub fn get_antonyms(data: &Value) -> Vec<String> {
@@ -59,7 +69,7 @@ pub fn print_defs(
     definitions: &[String],
     categories: &[String],
     examples: &[String],
-    phonetic: &Option<String>,
+    phonetic: &Option<Vec<String>>,
     synonyms: &Option<Vec<String>>,
     antonyms: &Option<Vec<String>>,
     show_types: bool,
@@ -67,10 +77,14 @@ pub fn print_defs(
     max: usize,
 ) {
     if let Some(p) = phonetic {
-        if p == "ul" || p == "null" {
-            println!("[No phonetic available]\n");
-        } else {
-            println!("{p}\n")
+        if !p.is_empty() {
+            print!("{}", p[0]);
+            for i in p.iter().skip(1) {
+                print!(", {}", i)
+            }
+
+            println!();
+            println!();
         }
     }
 
@@ -124,7 +138,7 @@ pub fn print_defs_colour(
     definitions: &[String],
     categories: &[String],
     examples: &[String],
-    phonetic: &Option<String>,
+    phonetic: &Option<Vec<String>>,
     synonyms: &Option<Vec<String>>,
     antonyms: &Option<Vec<String>>,
     show_types: bool,
@@ -132,10 +146,14 @@ pub fn print_defs_colour(
     max: usize,
 ) {
     if let Some(p) = phonetic {
-        if p == "ul" || p == "null" {
-            println!("{}\n", "[No phonetic available]".red().italic())
-        } else {
-            println!("{}\n", p.bright_yellow())
+        if !p.is_empty() {
+            print!("{}", p[0].yellow());
+            for i in p.iter().skip(1) {
+                print!(", {}", i.yellow())
+            }
+
+            println!();
+            println!();
         }
     }
 
