@@ -4,6 +4,10 @@ use clap::Parser;
 pub struct Args {
     /// The word to define
     pub word: Option<String>,
+    /// Set an API key to use instead of the one stored in the
+    /// `WORDSAPI_KEY` environment variable
+    #[clap(long)]
+    pub use_key: Option<String>,
     /// Show example usage alongside the definitions
     #[clap(short, long)]
     pub examples: bool,
