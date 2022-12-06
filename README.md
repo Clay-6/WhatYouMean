@@ -1,5 +1,7 @@
 # WhatYouMean
 
+**Currently not ready for use, but will replace the main branch once the switch to Wordnik is complete**
+
 A CLI dictionary that uses [WordsAPI](https://www.wordsapi.com) for its info
 
 ## Usage
