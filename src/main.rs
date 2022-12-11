@@ -42,7 +42,7 @@ async fn main() -> Result<()> {
 
     let defs: Vec<Definition> = get_data(&client, &url).await?;
 
-    for (i, def) in defs.iter().enumerate() {
+    for (i, def) in defs.iter().enumerate().take(args.max) {
         println!("{}. {} - {}", i + 1, def.part_of_speech(), def.text())
     }
 

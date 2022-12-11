@@ -11,4 +11,6 @@ pub struct Args {
     /// Search for a random word
     #[clap(short, long)]
     pub random: bool,
+    #[clap(long, default_value_t = 10)]
+    pub max: usize,
 }
