@@ -3,13 +3,13 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Definition {
-    text: String,
+    text: Option<String>,
     #[serde(rename = "partOfSpeech", default = "Definition::no_pos")]
     part_of_speech: String,
 }
 
 impl Definition {
-    pub fn text(&self) -> String {
+    pub fn text(&self) -> Option<String> {
         self.text.clone()
     }
 

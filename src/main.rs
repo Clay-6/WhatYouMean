@@ -4,6 +4,7 @@ mod utils;
 use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
+use colored::Colorize;
 use reqwest::Client;
 use serde_json::Value;
 use utils::get_data;
@@ -22,7 +23,7 @@ async fn main() -> Result<()> {
     } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
         key
     } else {
-        include_str!("../api_key").into()
+        include_str!("../api_key.txt").into()
     };
 
     let client = Client::new();
@@ -34,7 +35,7 @@ async fn main() -> Result<()> {
         )
         .await?;
         let word = data["text"].to_string();
-        println!("Got \"{}\"", word);
+        println!("Got \"{}\"", word.purple());
         word
     } else {
         "".into()
@@ -48,8 +49,18 @@ async fn main() -> Result<()> {
 
     let defs: Vec<Definition> = get_data(&client, &url).await?;
 
-    for (i, def) in defs.iter().enumerate().take(args.max) {
-        println!("{}. {} - {}", i + 1, def.part_of_speech(), def.text())
+    for (i, def) in defs
+        .iter()
+        .filter(|d| d.text().is_some())
+        .enumerate()
+        .take(args.max)
+    {
+        println!(
+            "{} {} - {}",
+            format!("{}.", i + 1).cyan().bold(),
+            def.part_of_speech().magenta(),
+            def.text().unwrap()
+        )
     }
 
     Ok(())
