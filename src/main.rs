@@ -7,6 +7,8 @@ use color_eyre::eyre::Result;
 use reqwest::Client;
 use utils::get_data;
 
+use crate::utils::Definition;
+
 const BASE_URL: &str = "http://api.wordnik.com/v4";
 
 #[tokio::main]
@@ -22,9 +24,11 @@ async fn main() -> Result<()> {
         BASE_URL, args.word, key
     );
 
-    let data = get_data(&client, &url).await?;
+    let defs: Vec<Definition> = get_data(&client, &url).await?;
 
-    println!("{data:?}");
+    for (i, def) in defs.iter().enumerate() {
+        println!("{}. {} - {}", i + 1, def.part_of_speech(), def.text())
+    }
 
     Ok(())
 }
