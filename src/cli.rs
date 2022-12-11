@@ -16,4 +16,7 @@ pub struct Args {
     /// display
     #[clap(long, default_value_t = 10)]
     pub max: usize,
+    /// Disable coloured output
+    #[clap(long)]
+    pub no_colour: bool,
 }

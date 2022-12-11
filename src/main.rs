@@ -57,12 +57,21 @@ async fn main() -> Result<()> {
     {
         let text = remove_tags(&def.text().unwrap());
 
-        println!(
-            "{} {} - {}",
-            format!("{}.", i + 1).cyan().bold(),
-            def.part_of_speech().magenta(),
-            text
-        )
+        if args.no_colour {
+            println!(
+                "{}. {} - {}",
+                format!("{}", i + 1).bold(),
+                def.part_of_speech(),
+                text
+            )
+        } else {
+            println!(
+                "{} {} - {}",
+                format!("{}.", i + 1).cyan().bold(),
+                def.part_of_speech().magenta(),
+                text
+            )
+        }
     }
 
     Ok(())
