@@ -17,7 +17,13 @@ async fn main() -> Result<()> {
     color_eyre::install()?;
 
     let args = Args::parse();
-    let key = &args.use_key.unwrap_or(std::env::var("WORDNIK_API_KEY")?);
+    let key = if let Some(key) = args.use_key {
+        key
+    } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
+        key
+    } else {
+        include_str!("../api_key").into()
+    };
 
     let client = Client::new();
 
