@@ -72,6 +72,7 @@ async fn main() -> Result<()> {
                 1, 2
                 */
                 text.remove(mat.start());
+                println!("{}", text)
             }
         }
 
