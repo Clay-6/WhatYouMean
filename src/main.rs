@@ -5,6 +5,7 @@ use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
 use colored::Colorize;
+use regex::Regex;
 use reqwest::Client;
 use serde_json::Value;
 use utils::get_data;
@@ -55,11 +56,30 @@ async fn main() -> Result<()> {
         .enumerate()
         .take(args.max)
     {
+        let mut text = def.text().unwrap();
+        let re = Regex::new("<([^;]*)>")?;
+
+        while let Some(mat) = re.find(&text.clone()) {
+            for _ in mat.start()..=mat.end() {
+                /*
+                every removal shifts whole string back by one, so match is always at
+                index of mat.start
+                e.g., if removing numbers >=3:
+
+                1, 2, 3, 4, 5
+                1, 2, 4, 5
+                1, 2, 5
+                1, 2
+                */
+                text.remove(mat.start());
+            }
+        }
+
         println!(
             "{} {} - {}",
             format!("{}.", i + 1).cyan().bold(),
             def.part_of_speech().magenta(),
-            def.text().unwrap()
+            text
         )
     }
 
