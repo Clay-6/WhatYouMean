@@ -57,10 +57,10 @@ async fn main() -> Result<()> {
         .take(args.max)
     {
         let mut text = def.text().unwrap();
-        let re = Regex::new("<([^;]*)>")?;
+        let re = Regex::new("<[^>]*>")?;
 
         while let Some(mat) = re.find(&text.clone()) {
-            for _ in mat.start()..=mat.end() {
+            for _ in mat.range() {
                 /*
                 every removal shifts whole string back by one, so match is always at
                 index of mat.start
