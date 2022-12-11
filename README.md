@@ -2,7 +2,7 @@
 
 **Currently not ready for use, but will replace the main branch once the switch to Wordnik is complete**
 
-A CLI dictionary that uses [WordsAPI](https://www.wordsapi.com) for its info
+A CLI dictionary that uses [Wordnik](https://www.wordnik.com) for its info
 
 ## Usage
 
@@ -19,8 +19,9 @@ for more detailed usage instructions
 
 ### Universal Setup
 
-Get an [API key](https://rapidapi.com/dpventures/api/wordsapi/pricing) & save it in
-an environment variable called `WORDSAPI_KEY`
+While a default API key can be used, it's rate limited to 100 requests per hour accross all users. To use
+your own API key, get one [here](https://developer.wordnik.com/) and store it in an environment variable named
+`WORDNIK_API_KEY`
 
 ### Through Cargo
 
