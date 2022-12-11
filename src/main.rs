@@ -5,6 +5,7 @@ use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
 use reqwest::Client;
+use serde_json::Value;
 use utils::get_data;
 
 use crate::utils::Definition;
@@ -19,9 +20,24 @@ async fn main() -> Result<()> {
     let key = &args.use_key.unwrap_or(std::env::var("WORDNIK_API_KEY")?);
 
     let client = Client::new();
+
+    let random_word = if args.random {
+        let data = get_data::<Value>(
+            &client,
+            &format!("{}/words.json/randomWord?api_key={}", BASE_URL, key),
+        )
+        .await?;
+        let word = data["text"].to_string();
+        println!("Got \"{}\"", word);
+        word
+    } else {
+        "".into()
+    };
+    let word = &args.word.unwrap_or(random_word);
+
     let url = format!(
         "{}/word.json/{}/definitions?api_key={}",
-        BASE_URL, args.word, key
+        BASE_URL, word, key
     );
 
     let defs: Vec<Definition> = get_data(&client, &url).await?;
