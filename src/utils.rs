@@ -30,3 +30,26 @@ pub async fn get_data<T: for<'a> Deserialize<'a>>(
 
     Ok(serde_json::from_str(&res.text().await?)?)
 }
+
+pub fn remove_tags(txt: &str) -> String {
+    let mut text = txt.to_string();
+    let re = regex::Regex::new("<[^>]*>").unwrap();
+
+    while let Some(mat) = re.find(&text.clone()) {
+        for _ in mat.range() {
+            /*
+            every removal shifts whole string back by one, so match is always at
+            index of mat.start
+            e.g., if removing numbers >=3:
+
+            1, 2, 3, 4, 5
+            1, 2, 4, 5
+            1, 2, 5
+            1, 2
+            */
+            text.remove(mat.start());
+        }
+    }
+
+    text
+}

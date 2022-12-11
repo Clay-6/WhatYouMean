@@ -8,7 +8,7 @@ use colored::Colorize;
 use regex::Regex;
 use reqwest::Client;
 use serde_json::Value;
-use utils::get_data;
+use utils::{get_data, remove_tags};
 
 use crate::utils::Definition;
 
@@ -56,25 +56,7 @@ async fn main() -> Result<()> {
         .enumerate()
         .take(args.max)
     {
-        let mut text = def.text().unwrap();
-        let re = Regex::new("<[^>]*>")?;
-
-        while let Some(mat) = re.find(&text.clone()) {
-            for _ in mat.range() {
-                /*
-                every removal shifts whole string back by one, so match is always at
-                index of mat.start
-                e.g., if removing numbers >=3:
-
-                1, 2, 3, 4, 5
-                1, 2, 4, 5
-                1, 2, 5
-                1, 2
-                */
-                text.remove(mat.start());
-                println!("{}", text)
-            }
-        }
+        let text = remove_tags(&def.text().unwrap());
 
         println!(
             "{} {} - {}",
