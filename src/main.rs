@@ -5,7 +5,6 @@ use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
 use colored::Colorize;
-use regex::Regex;
 use reqwest::Client;
 use serde_json::Value;
 use utils::{get_data, remove_tags};
