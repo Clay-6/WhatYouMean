@@ -49,9 +49,16 @@ async fn main() -> Result<()> {
 
     if args.phonetics {
         let prons = get_phonetics(&client, word, &key).await?;
-        print!("{}", prons[0]);
-        for p in prons.iter().skip(1) {
-            print!(", {}", p);
+        if args.no_colour {
+            print!("{}", prons[0]);
+            for p in prons.iter().skip(1) {
+                print!(", {}", p);
+            }
+        } else {
+            print!("{}", prons[0].yellow());
+            for p in prons.iter().skip(1) {
+                print!(", {}", p.yellow());
+            }
         }
         println!("\n");
     }
