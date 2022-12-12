@@ -77,14 +77,30 @@ async fn main() -> Result<()> {
                 format!("{}", i + 1).bold(),
                 def.part_of_speech(),
                 text
-            )
+            );
+            if args.examples {
+                let example = def.top_example();
+                if example.is_empty() {
+                    println!("[No example]");
+                } else {
+                    println!("e.g. {}", def.top_example())
+                }
+            }
         } else {
             println!(
                 "{} {} - {}",
                 format!("{}.", i + 1).cyan().bold(),
                 def.part_of_speech().magenta(),
                 text
-            )
+            );
+            if args.examples {
+                let example = def.top_example();
+                if example.is_empty() {
+                    println!("{}", "[No example]".red().italic());
+                } else {
+                    println!("{}", format!("e.g. {}", def.top_example()).green())
+                }
+            }
         }
     }
 

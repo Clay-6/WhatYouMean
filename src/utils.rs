@@ -7,6 +7,7 @@ pub struct Definition {
     text: Option<String>,
     #[serde(default = "Definition::no_pos")]
     part_of_speech: String,
+    example_uses: Vec<Example>,
 }
 
 impl Definition {
@@ -16,6 +17,18 @@ impl Definition {
 
     pub fn part_of_speech(&self) -> String {
         self.part_of_speech.clone()
+    }
+
+    pub fn examples(&self) -> Vec<String> {
+        self.example_uses.iter().map(|e| e.text.clone()).collect()
+    }
+
+    pub fn top_example(&self) -> String {
+        if self.example_uses.is_empty() {
+            "".into()
+        } else {
+            self.examples()[0].clone()
+        }
     }
 
     fn no_pos() -> String {
@@ -28,6 +41,11 @@ impl Definition {
 struct Pronunciation {
     raw: String,
     raw_type: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct Example {
+    text: String,
 }
 
 pub async fn get_data<T: for<'a> Deserialize<'a>>(

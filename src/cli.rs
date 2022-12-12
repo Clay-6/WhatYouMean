@@ -22,4 +22,7 @@ pub struct Args {
     /// Display the phonetics for a word
     #[clap(short, long)]
     pub phonetics: bool,
+    /// Show example usage for a word
+    #[clap(short, long)]
+    pub examples: bool,
 }
