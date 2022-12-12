@@ -25,4 +25,10 @@ pub struct Args {
     /// Show example usage for a word
     #[clap(short, long)]
     pub examples: bool,
+    /// Show a word's synonyms
+    #[clap(short, long)]
+    pub synonyms: bool,
+    // Show a word's antonyms
+    #[clap(short, long)]
+    pub antonyms: bool,
 }

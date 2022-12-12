@@ -1,5 +1,8 @@
+use core::fmt;
+
 use color_eyre::eyre::Result;
 use serde::Deserialize;
+use serde_json::Value;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -8,6 +11,11 @@ pub struct Definition {
     #[serde(default = "Definition::no_pos")]
     part_of_speech: String,
     example_uses: Vec<Example>,
+}
+
+pub enum RelationshipType {
+    Synonym,
+    Antonym,
 }
 
 impl Definition {
@@ -33,6 +41,19 @@ impl Definition {
 
     fn no_pos() -> String {
         "[None]".into()
+    }
+}
+
+impl fmt::Display for RelationshipType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                RelationshipType::Synonym => "synonym",
+                RelationshipType::Antonym => "antonym",
+            },
+        )
     }
 }
 
@@ -67,6 +88,27 @@ pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> R
         .iter()
         .filter(|p| p.raw_type == "IPA")
         .map(|p| p.raw.clone())
+        .collect())
+}
+
+pub async fn get_related(
+    client: &reqwest::Client,
+    word: &str,
+    key: &str,
+    rel_type: RelationshipType,
+) -> Result<Vec<String>> {
+    let url = format!(
+        "https://api.wordnik.com/v4/word.json/{}/relatedWords?&relationshipTypes={}&api_key={}",
+        word, rel_type, key
+    );
+    let res = client.get(url).send().await?.error_for_status()?;
+
+    let val: Value = serde_json::from_str(&res.text().await?)?;
+    Ok(val[0]["words"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|w| w.to_string())
         .collect())
 }
 

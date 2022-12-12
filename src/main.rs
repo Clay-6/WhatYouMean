@@ -7,7 +7,7 @@ use color_eyre::eyre::Result;
 use colored::Colorize;
 use reqwest::Client;
 use serde_json::Value;
-use utils::{get_data, get_phonetics, remove_tags, Definition};
+use utils::{get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType};
 
 const BASE_URL: &str = "http://api.wordnik.com/v4";
 
@@ -102,6 +102,38 @@ async fn main() -> Result<()> {
                 }
             }
         }
+    }
+
+    if args.synonyms {
+        let syns = get_related(&client, word, &key, RelationshipType::Synonym).await?;
+        if args.no_colour {
+            print!("Synonyms: {}", syns[0]);
+            for syn in syns.iter().skip(1) {
+                print!(", {}", syn);
+            }
+        } else {
+            print!("Synonyms: {}", syns[0].yellow());
+            for syn in syns.iter().skip(1) {
+                print!(", {}", syn.yellow())
+            }
+        }
+        println!()
+    }
+
+    if args.antonyms {
+        let ants = get_related(&client, word, &key, RelationshipType::Antonym).await?;
+        if args.no_colour {
+            print!("Antonyms: {}", ants[0]);
+            for ant in ants.iter().skip(1) {
+                print!(", {}", ant);
+            }
+        } else {
+            print!("Antonyms: {}", ants[0].yellow());
+            for ant in ants.iter().skip(1) {
+                print!(", {}", ant.yellow())
+            }
+        }
+        println!()
     }
 
     Ok(())
