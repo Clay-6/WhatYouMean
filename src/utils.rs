@@ -19,15 +19,15 @@ impl Definition {
         self.part_of_speech.clone()
     }
 
-    pub fn examples(&self) -> Vec<String> {
-        self.example_uses.iter().map(|e| e.text.clone()).collect()
-    }
-
     pub fn top_example(&self) -> String {
         if self.example_uses.is_empty() {
             "".into()
         } else {
-            self.examples()[0].clone()
+            self.example_uses
+                .iter()
+                .map(|e| e.text.clone())
+                .collect::<Vec<_>>()[0]
+                .clone()
         }
     }
 
