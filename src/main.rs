@@ -7,9 +7,7 @@ use color_eyre::eyre::Result;
 use colored::Colorize;
 use reqwest::Client;
 use serde_json::Value;
-use utils::{get_data, remove_tags};
-
-use crate::utils::Definition;
+use utils::{get_data, get_phonetics, remove_tags, Definition};
 
 const BASE_URL: &str = "http://api.wordnik.com/v4";
 
@@ -48,6 +46,15 @@ async fn main() -> Result<()> {
     );
 
     let defs: Vec<Definition> = get_data(&client, &url).await?;
+
+    if args.phonetics {
+        let prons = get_phonetics(&client, word, &key).await?;
+        print!("{}", prons[0]);
+        for p in prons.iter().skip(1) {
+            print!(", {}", p);
+        }
+        println!("\n");
+    }
 
     for (i, def) in defs
         .iter()

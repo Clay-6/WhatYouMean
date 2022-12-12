@@ -2,9 +2,10 @@ use color_eyre::eyre::Result;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Definition {
     text: Option<String>,
-    #[serde(rename = "partOfSpeech", default = "Definition::no_pos")]
+    #[serde(default = "Definition::no_pos")]
     part_of_speech: String,
 }
 
@@ -22,6 +23,13 @@ impl Definition {
     }
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Pronunciation {
+    raw: String,
+    raw_type: String,
+}
+
 pub async fn get_data<T: for<'a> Deserialize<'a>>(
     client: &reqwest::Client,
     url: &str,
@@ -29,6 +37,19 @@ pub async fn get_data<T: for<'a> Deserialize<'a>>(
     let res = client.get(url).send().await?.error_for_status()?;
 
     Ok(serde_json::from_str(&res.text().await?)?)
+}
+
+pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
+    let url = format!("https://api.wordnik.com/v4/word.json/{word}/pronunciations?api_key={key}");
+    let res = client.get(url).send().await?.error_for_status()?;
+
+    let prons: Vec<Pronunciation> = serde_json::from_str(&res.text().await?)?;
+
+    Ok(prons
+        .iter()
+        .filter(|p| p.raw_type == "IPA")
+        .map(|p| p.raw.clone())
+        .collect())
 }
 
 pub fn remove_tags(txt: &str) -> String {

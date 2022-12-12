@@ -19,4 +19,7 @@ pub struct Args {
     /// Disable coloured output
     #[clap(long)]
     pub no_colour: bool,
+    /// Display the phonetics for a word
+    #[clap(short, long)]
+    pub phonetics: bool,
 }
