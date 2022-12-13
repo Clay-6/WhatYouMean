@@ -116,35 +116,45 @@ async fn main() -> Result<()> {
     }
 
     if args.synonyms {
-        let syns = get_related(&client, word, &key, RelationshipType::Synonym).await?;
-        if args.no_colour {
-            print!("Synonyms: {}", syns[0]);
-            for syn in syns.iter().skip(1) {
-                print!(", {}", syn);
+        if let Ok(syns) = get_related(&client, word, &key, RelationshipType::Synonym).await {
+            if args.no_colour {
+                print!("Synonyms: {}", syns[0]);
+                for syn in syns.iter().skip(1) {
+                    print!(", {}", syn);
+                }
+            } else {
+                print!("Synonyms: {}", syns[0].yellow());
+                for syn in syns.iter().skip(1) {
+                    print!(", {}", syn.yellow())
+                }
             }
+            println!()
+        } else if args.no_colour {
+            println!("[No synonyms available]")
         } else {
-            print!("Synonyms: {}", syns[0].yellow());
-            for syn in syns.iter().skip(1) {
-                print!(", {}", syn.yellow())
-            }
+            println!("{}", "[No synonyms available]".red().italic())
         }
-        println!()
     }
 
     if args.antonyms {
-        let ants = get_related(&client, word, &key, RelationshipType::Antonym).await?;
-        if args.no_colour {
-            print!("Antonyms: {}", ants[0]);
-            for ant in ants.iter().skip(1) {
-                print!(", {}", ant);
+        if let Ok(ants) = get_related(&client, word, &key, RelationshipType::Antonym).await {
+            if args.no_colour {
+                print!("Antonyms: {}", ants[0]);
+                for ant in ants.iter().skip(1) {
+                    print!(", {}", ant);
+                }
+            } else {
+                print!("Antonyms: {}", ants[0].yellow());
+                for ant in ants.iter().skip(1) {
+                    print!(", {}", ant.yellow())
+                }
             }
+            println!()
+        } else if args.no_colour {
+            println!("[No antonyms available]")
         } else {
-            print!("Antonyms: {}", ants[0].yellow());
-            for ant in ants.iter().skip(1) {
-                print!(", {}", ant.yellow())
-            }
+            println!("{}", "[No antonyms available]".red().italic())
         }
-        println!()
     }
 
     Ok(())
