@@ -4,7 +4,7 @@ mod utils;
 use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
-use owo_colors::OwoColorize;
+use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
 use serde_json::Value;
 use utils::{get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType};
@@ -25,6 +25,10 @@ async fn main() -> Result<()> {
             synonyms: true,
             ..args
         };
+    }
+
+    if args.no_colour {
+        owo_colors::set_override(false);
     }
 
     let key = if let Some(key) = args.use_key {
@@ -48,11 +52,8 @@ async fn main() -> Result<()> {
             .chars()
             .filter(|c| *c != '"')
             .collect::<String>();
-        if args.no_colour {
-            println!("Got \"{}\"", word)
-        } else {
-            println!("Got \"{}\"", word.purple())
-        }
+
+        println!("Got \"{}\"", word.if_supports_color(Stdout, |t| t.purple()));
         word
     } else {
         "".to_string()
@@ -68,22 +69,18 @@ async fn main() -> Result<()> {
 
     if args.phonetics {
         if let Ok(prons) = get_phonetics(&client, word, &key).await {
-            if args.no_colour {
-                print!("{}", prons[0]);
-                for p in prons.iter().skip(1) {
-                    print!(", {}", p);
-                }
-            } else {
-                print!("{}", prons[0].yellow());
-                for p in prons.iter().skip(1) {
-                    print!(", {}", p.yellow());
-                }
+            print!("{}", prons[0].if_supports_color(Stdout, |t| t.yellow()));
+            for p in prons.iter().skip(1) {
+                print!(", {}", p.if_supports_color(Stdout, |t| t.yellow()));
             }
             println!("\n");
-        } else if args.no_colour {
-            println!("[No phonetics available]\n")
         } else {
-            println!("{}", "[No phonetics available]".red().italic())
+            println!(
+                "{}\n",
+                "[No phonetics available]"
+                    .if_supports_color(Stdout, |t| t.red())
+                    .italic()
+            )
         }
     }
 
@@ -94,79 +91,70 @@ async fn main() -> Result<()> {
         .take(args.max)
     {
         let text = remove_tags(&def.text().unwrap());
-
-        if args.no_colour {
-            println!(
-                "{}. {} - {}",
-                format!("{}", i + 1).bold(),
-                def.part_of_speech(),
-                text
-            );
-            if args.examples {
-                let example = def.top_example();
-                if example.is_empty() {
-                    println!("[No example]");
-                } else {
-                    println!("e.g. {}", def.top_example())
-                }
-            }
-        } else {
-            println!(
-                "{} {} - {}",
-                format!("{}.", i + 1).cyan().bold(),
-                def.part_of_speech().magenta(),
-                text
-            );
-            if args.examples {
-                let example = def.top_example();
-                if example.is_empty() {
-                    println!("{}", "[No example]".red().italic());
-                } else {
-                    println!("{}", format!("e.g. {}", def.top_example()).green())
-                }
+        println!(
+            "{} {} - {}",
+            (i + 1).if_supports_color(Stdout, |t| t.cyan()).bold(),
+            def.part_of_speech()
+                .if_supports_color(Stdout, |t| t.magenta()),
+            text
+        );
+        if args.examples {
+            let example = def.top_example();
+            if example.is_empty() {
+                println!(
+                    "{}",
+                    "[No example]"
+                        .if_supports_color(Stdout, |t| t.red())
+                        .italic()
+                );
+            } else {
+                println!(
+                    "{}",
+                    format!("e.g. {}", def.top_example()).if_supports_color(Stdout, |t| t.green())
+                )
             }
         }
     }
 
     if args.synonyms {
         if let Ok(syns) = get_related(&client, word, &key, RelationshipType::Synonym).await {
-            if args.no_colour {
-                print!("Synonyms: {}", syns[0]);
-                for syn in syns.iter().skip(1) {
-                    print!(", {}", syn);
-                }
-            } else {
-                print!("Synonyms: {}", syns[0].yellow());
-                for syn in syns.iter().skip(1) {
-                    print!(", {}", syn.yellow())
-                }
+            print!(
+                "Synonyms: {}",
+                syns[0].if_supports_color(Stdout, |t| t.yellow())
+            );
+            for syn in syns.iter().skip(1) {
+                print!(", {}", syn.if_supports_color(Stdout, |t| t.yellow()))
             }
+
             println!()
-        } else if args.no_colour {
-            println!("[No synonyms available]")
         } else {
-            println!("{}", "[No synonyms available]".red().italic())
+            println!(
+                "{}",
+                "[No synonyms available]"
+                    .if_supports_color(Stdout, |t| t.red())
+                    .italic()
+            )
         }
     }
 
     if args.antonyms {
         if let Ok(ants) = get_related(&client, word, &key, RelationshipType::Antonym).await {
-            if args.no_colour {
-                print!("Antonyms: {}", ants[0]);
-                for ant in ants.iter().skip(1) {
-                    print!(", {}", ant);
-                }
-            } else {
-                print!("Antonyms: {}", ants[0].yellow());
-                for ant in ants.iter().skip(1) {
-                    print!(", {}", ant.yellow())
-                }
+            print!(
+                "Antonyms: {}",
+                ants[0].if_supports_color(Stdout, |t| t.yellow())
+            );
+            for ant in ants.iter().skip(1) {
+                print!(", {}", ant.if_supports_color(Stdout, |t| t.yellow()))
             }
+
             println!()
-        } else if args.no_colour {
-            println!("[No antonyms available]")
         } else {
-            println!("{}", "[No antonyms available]".red().italic())
+            println!(
+                "{}",
+                "[No antonyms available]"
+                    .if_supports_color(Stdout, |t| t.red())
+                    .italic()
+            )
         }
     }
 
