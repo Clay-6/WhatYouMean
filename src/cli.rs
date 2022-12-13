@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Clone, Parser)]
 #[clap(author, version, about)]
 pub struct Args {
     /// The word to see definitions for
@@ -31,4 +31,7 @@ pub struct Args {
     // Show a word's antonyms
     #[clap(short, long)]
     pub antonyms: bool,
+    // Display all available info about a word
+    #[clap(short, long)]
+    pub verbose: bool,
 }

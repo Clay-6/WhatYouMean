@@ -15,7 +15,18 @@ const BASE_URL: &str = "http://api.wordnik.com/v4";
 async fn main() -> Result<()> {
     color_eyre::install()?;
 
-    let args = Args::parse();
+    let mut args = Args::parse();
+
+    if args.verbose {
+        args = Args {
+            phonetics: true,
+            examples: true,
+            antonyms: true,
+            synonyms: true,
+            ..args
+        };
+    }
+
     let key = if let Some(key) = args.use_key {
         key
     } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
