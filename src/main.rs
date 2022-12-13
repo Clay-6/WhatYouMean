@@ -93,7 +93,9 @@ async fn main() -> Result<()> {
         let text = remove_tags(&def.text().unwrap());
         println!(
             "{} {} - {}",
-            (i + 1).if_supports_color(Stdout, |t| t.cyan()).bold(),
+            format!("{}.", i + 1)
+                .if_supports_color(Stdout, |t| t.cyan())
+                .bold(),
             def.part_of_speech()
                 .if_supports_color(Stdout, |t| t.magenta()),
             text

@@ -1,6 +1,6 @@
 use core::fmt;
 
-use color_eyre::eyre::Result;
+use color_eyre::{eyre::Result, Report};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -84,11 +84,17 @@ pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> R
 
     let prons: Vec<Pronunciation> = serde_json::from_str(&res.text().await?)?;
 
-    Ok(prons
+    let ipa_prons = prons
         .iter()
         .filter(|p| p.raw_type == "IPA")
         .map(|p| p.raw.clone())
-        .collect())
+        .collect::<Vec<_>>();
+
+    if ipa_prons.is_empty() {
+        Err(Report::msg("No IPA phonetics"))
+    } else {
+        Ok(ipa_prons)
+    }
 }
 
 pub async fn get_related(
