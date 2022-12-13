@@ -67,19 +67,24 @@ async fn main() -> Result<()> {
     let defs: Vec<Definition> = get_data(&client, &url).await?;
 
     if args.phonetics {
-        let prons = get_phonetics(&client, word, &key).await?;
-        if args.no_colour {
-            print!("{}", prons[0]);
-            for p in prons.iter().skip(1) {
-                print!(", {}", p);
+        if let Ok(prons) = get_phonetics(&client, word, &key).await {
+            if args.no_colour {
+                print!("{}", prons[0]);
+                for p in prons.iter().skip(1) {
+                    print!(", {}", p);
+                }
+            } else {
+                print!("{}", prons[0].yellow());
+                for p in prons.iter().skip(1) {
+                    print!(", {}", p.yellow());
+                }
             }
+            println!("\n");
+        } else if args.no_colour {
+            println!("[No phonetics available]\n")
         } else {
-            print!("{}", prons[0].yellow());
-            for p in prons.iter().skip(1) {
-                print!(", {}", p.yellow());
-            }
+            println!("{}", "[No phonetics available]".red().italic())
         }
-        println!("\n");
     }
 
     for (i, def) in defs
