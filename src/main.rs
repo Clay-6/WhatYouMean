@@ -4,7 +4,7 @@ mod utils;
 use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
-use colored::Colorize;
+use owo_colors::OwoColorize;
 use reqwest::Client;
 use serde_json::Value;
 use utils::{get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType};
