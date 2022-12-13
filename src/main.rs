@@ -43,11 +43,19 @@ async fn main() -> Result<()> {
             &format!("{}/words.json/randomWord?api_key={}", BASE_URL, key),
         )
         .await?;
-        let word = data["text"].to_string();
-        println!("Got \"{}\"", word.purple());
+        let word = data["word"]
+            .to_string()
+            .chars()
+            .filter(|c| *c != '"')
+            .collect::<String>();
+        if args.no_colour {
+            println!("Got \"{}\"", word)
+        } else {
+            println!("Got \"{}\"", word.purple())
+        }
         word
     } else {
-        "".into()
+        "".to_string()
     };
     let word = &args.word.unwrap_or(random_word);
 
