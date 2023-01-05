@@ -4,6 +4,7 @@ mod utils;
 use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
+use dotenvy_macro::dotenv;
 use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
 use serde_json::Value;
@@ -36,7 +37,7 @@ async fn main() -> Result<()> {
     } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
         key
     } else {
-        std::env!("WORDNIK_API_KEY").into()
+        dotenv!("API_KEY").into()
     };
 
     let client = Client::new();
