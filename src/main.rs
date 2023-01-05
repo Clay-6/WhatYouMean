@@ -37,7 +37,7 @@ async fn main() -> Result<()> {
     } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
         key
     } else {
-        dotenv!("API_KEY").into()
+        return Err(color_eyre::eyre::eyre!("Couldn't find API key"));
     };
 
     let client = Client::new();
@@ -45,7 +45,7 @@ async fn main() -> Result<()> {
     let random_word = if args.random {
         let data = get_data::<Value>(
             &client,
-            &format!("{}/words.json/randomWord?api_key={}", BASE_URL, key),
+            &format!("{}/words.json/randomWord?api_key={}", BASE_URL, &key),
         )
         .await?;
         let word = data["word"]
