@@ -36,7 +36,7 @@ async fn main() -> Result<()> {
     } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
         key
     } else {
-        return Err(color_eyre::eyre::eyre!("Couldn't find API key"));
+        include_str!("../api_key.txt").into()
     };
 
     let client = Client::new();
