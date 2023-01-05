@@ -4,7 +4,6 @@ mod utils;
 use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::Result;
-use dotenvy_macro::dotenv;
 use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
 use serde_json::Value;
