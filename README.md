@@ -18,8 +18,8 @@ for more detailed usage instructions
 ### Universal Setup
 
 Get a Wordnik API key [here](https://developer.wordnik.com/) and store it in an environment variable named
-`WORDNIK_API_KEY`. Prebuilt binaries & Windows installer will allow for the use of a default API key, rate limited
-to 100 requests/hour for everyone who uses it.
+`WORDNIK_API_KEY`. You can, however, use a builtin API key which is rate limited to 100 requests per hour
+for all users.
 
 ### Through Cargo
 
