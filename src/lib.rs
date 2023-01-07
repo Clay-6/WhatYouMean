@@ -15,14 +15,28 @@ pub struct WordInfo {
 
 impl WordInfo {
     pub async fn new(word: &str, client: &Client, url: &str, key: &str) -> Result<Self> {
-        let definitions = get_data::<Vec<Definition>>(client, url).await?;
+        let definitions = get_data::<Vec<Definition>>(client, url)
+            .await?
+            .iter()
+            .map(|d| Definition {
+                text: d.text.as_ref().map(|text| remove_tags(text)),
+                part_of_speech: d.part_of_speech.clone(),
+                example_uses: d.example_uses.clone(),
+            })
+            .collect();
         let pronunciations = get_phonetics(client, word, key).await.unwrap_or_default();
         let synonyms = get_related(client, word, key, RelationshipType::Synonym)
             .await
-            .unwrap_or_default();
+            .unwrap_or_default()
+            .iter()
+            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
+            .collect();
         let antonyms = get_related(client, word, key, RelationshipType::Antonym)
             .await
-            .unwrap_or_default();
+            .unwrap_or_default()
+            .iter()
+            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
+            .collect();
 
         Ok(Self {
             definitions,
@@ -93,7 +107,7 @@ struct Pronunciation {
     raw_type: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct Example {
     text: String,
 }
