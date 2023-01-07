@@ -7,7 +7,7 @@ use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
 use serde_json::Value;
 use whatyoumean::{
-    get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType,
+    get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType, WordInfo,
 };
 
 const BASE_URL: &str = "http://api.wordnik.com/v4";
@@ -17,6 +17,7 @@ async fn main() -> Result<()> {
     color_eyre::install()?;
 
     let mut args = Args::parse();
+    let client = Client::new();
 
     if args.verbose {
         args = Args {
@@ -33,8 +34,6 @@ async fn main() -> Result<()> {
     }
 
     let key = args.use_key.unwrap_or(std::env::var("WORDNIK_API_KEY")?);
-
-    let client = Client::new();
 
     let random_word = if args.random {
         let data = get_data::<Value>(
@@ -60,100 +59,105 @@ async fn main() -> Result<()> {
         BASE_URL, word, key
     );
 
-    let defs: Vec<Definition> = get_data(&client, &url).await?;
+    if args.json {
+        let info = WordInfo::new(word, &client, &url, &key).await?;
+        println!("{}", serde_json::to_string_pretty(&info)?)
+    } else {
+        let defs: Vec<Definition> = get_data(&client, &url).await?;
 
-    if args.phonetics {
-        if let Ok(prons) = get_phonetics(&client, word, &key).await {
-            print!("{}", prons[0].if_supports_color(Stdout, |t| t.yellow()));
-            for p in prons.iter().skip(1) {
-                print!(", {}", p.if_supports_color(Stdout, |t| t.yellow()));
-            }
-            println!("\n");
-        } else {
-            println!(
-                "{}\n",
-                "[No phonetics available]"
-                    .if_supports_color(Stdout, |t| t.red())
-                    .italic()
-            )
-        }
-    }
-
-    for (i, def) in defs
-        .iter()
-        .filter(|d| d.text().is_some())
-        .enumerate()
-        .take(args.max)
-    {
-        let text = remove_tags(&def.text().unwrap());
-        println!(
-            "{} {} - {}",
-            format!("{}.", i + 1)
-                .if_supports_color(Stdout, |t| t.cyan())
-                .bold(),
-            def.part_of_speech()
-                .if_supports_color(Stdout, |t| t.magenta()),
-            text
-        );
-        if args.examples {
-            let example = def.top_example();
-            if example.is_empty() {
+        if args.phonetics {
+            if let Ok(prons) = get_phonetics(&client, word, &key).await {
+                print!("{}", prons[0].if_supports_color(Stdout, |t| t.yellow()));
+                for p in prons.iter().skip(1) {
+                    print!(", {}", p.if_supports_color(Stdout, |t| t.yellow()));
+                }
+                println!("\n");
+            } else {
                 println!(
-                    "{}",
-                    "[No example]"
+                    "{}\n",
+                    "[No phonetics available]"
                         .if_supports_color(Stdout, |t| t.red())
                         .italic()
+                )
+            }
+        }
+
+        for (i, def) in defs
+            .iter()
+            .filter(|d| d.text().is_some())
+            .enumerate()
+            .take(args.max)
+        {
+            let text = remove_tags(&def.text().unwrap());
+            println!(
+                "{} {} - {}",
+                format!("{}.", i + 1)
+                    .if_supports_color(Stdout, |t| t.cyan())
+                    .bold(),
+                def.part_of_speech()
+                    .if_supports_color(Stdout, |t| t.magenta()),
+                text
+            );
+            if args.examples {
+                let example = def.top_example();
+                if example.is_empty() {
+                    println!(
+                        "{}",
+                        "[No example]"
+                            .if_supports_color(Stdout, |t| t.red())
+                            .italic()
+                    );
+                } else {
+                    println!(
+                        "{}",
+                        format!("e.g. {}", def.top_example())
+                            .if_supports_color(Stdout, |t| t.green())
+                    )
+                }
+            }
+        }
+
+        if args.synonyms {
+            if let Ok(syns) = get_related(&client, word, &key, RelationshipType::Synonym).await {
+                print!(
+                    "Synonyms: {}",
+                    syns[0].if_supports_color(Stdout, |t| t.yellow())
                 );
+                for syn in syns.iter().skip(1) {
+                    print!(", {}", syn.if_supports_color(Stdout, |t| t.yellow()))
+                }
+
+                println!()
             } else {
                 println!(
                     "{}",
-                    format!("e.g. {}", def.top_example()).if_supports_color(Stdout, |t| t.green())
+                    "[No synonyms available]"
+                        .if_supports_color(Stdout, |t| t.red())
+                        .italic()
+                )
+            }
+        }
+
+        if args.antonyms {
+            if let Ok(ants) = get_related(&client, word, &key, RelationshipType::Antonym).await {
+                print!(
+                    "Antonyms: {}",
+                    ants[0].if_supports_color(Stdout, |t| t.yellow())
+                );
+                for ant in ants.iter().skip(1) {
+                    print!(", {}", ant.if_supports_color(Stdout, |t| t.yellow()))
+                }
+
+                println!()
+            } else {
+                println!(
+                    "{}",
+                    "[No antonyms available]"
+                        .if_supports_color(Stdout, |t| t.red())
+                        .italic()
                 )
             }
         }
     }
-
-    if args.synonyms {
-        if let Ok(syns) = get_related(&client, word, &key, RelationshipType::Synonym).await {
-            print!(
-                "Synonyms: {}",
-                syns[0].if_supports_color(Stdout, |t| t.yellow())
-            );
-            for syn in syns.iter().skip(1) {
-                print!(", {}", syn.if_supports_color(Stdout, |t| t.yellow()))
-            }
-
-            println!()
-        } else {
-            println!(
-                "{}",
-                "[No synonyms available]"
-                    .if_supports_color(Stdout, |t| t.red())
-                    .italic()
-            )
-        }
-    }
-
-    if args.antonyms {
-        if let Ok(ants) = get_related(&client, word, &key, RelationshipType::Antonym).await {
-            print!(
-                "Antonyms: {}",
-                ants[0].if_supports_color(Stdout, |t| t.yellow())
-            );
-            for ant in ants.iter().skip(1) {
-                print!(", {}", ant.if_supports_color(Stdout, |t| t.yellow()))
-            }
-
-            println!()
-        } else {
-            println!(
-                "{}",
-                "[No antonyms available]"
-                    .if_supports_color(Stdout, |t| t.red())
-                    .italic()
-            )
-        }
-    }
-
     Ok(())
 }

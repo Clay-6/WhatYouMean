@@ -16,9 +16,13 @@ pub struct WordInfo {
 impl WordInfo {
     pub async fn new(word: &str, client: &Client, url: &str, key: &str) -> Result<Self> {
         let definitions = get_data::<Vec<Definition>>(client, url).await?;
-        let pronunciations = get_phonetics(client, word, key).await?;
-        let synonyms = get_related(client, word, key, RelationshipType::Synonym).await?;
-        let antonyms = get_related(client, word, key, RelationshipType::Antonym).await?;
+        let pronunciations = get_phonetics(client, word, key).await.unwrap_or_default();
+        let synonyms = get_related(client, word, key, RelationshipType::Synonym)
+            .await
+            .unwrap_or_default();
+        let antonyms = get_related(client, word, key, RelationshipType::Antonym)
+            .await
+            .unwrap_or_default();
 
         Ok(Self {
             definitions,

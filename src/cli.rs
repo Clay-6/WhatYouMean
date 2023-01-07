@@ -34,4 +34,7 @@ pub struct Args {
     // Display all available info about a word
     #[clap(short, long)]
     pub verbose: bool,
+    /// Output all data for a word in JSON format
+    #[clap(long)]
+    pub json: bool,
 }
