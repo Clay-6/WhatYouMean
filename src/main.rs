@@ -31,13 +31,7 @@ async fn main() -> Result<()> {
         owo_colors::set_override(false);
     }
 
-    let key = if let Some(key) = args.use_key {
-        key
-    } else if let Ok(key) = std::env::var("WORDNIK_API_KEY") {
-        key
-    } else {
-        include_str!("../api_key.txt").into()
-    };
+    let key = args.use_key.unwrap_or(std::env::var("WORDNIK_API_KEY")?);
 
     let client = Client::new();
 
