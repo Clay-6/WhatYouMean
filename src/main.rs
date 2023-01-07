@@ -10,8 +10,6 @@ use whatyoumean::{
     WordInfo,
 };
 
-const BASE_URL: &str = "http://api.wordnik.com/v4";
-
 #[tokio::main]
 async fn main() -> Result<()> {
     color_eyre::install()?;

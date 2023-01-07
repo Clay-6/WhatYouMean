@@ -5,6 +5,8 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+const BASE_URL: &str = "https://api.wordnik.com/v4";
+
 #[derive(Debug, Serialize)]
 pub struct WordInfo {
     definitions: Vec<Definition>,
@@ -121,10 +123,7 @@ async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Res
 pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<Vec<Definition>> {
     get_data::<Vec<Definition>>(
         client,
-        &format!(
-            "http://api.wordnik.com/v4/word.json/{}/definitions?api_key={}",
-            word, key
-        ),
+        &format!("{BASE_URL}/word.json/{word}/definitions?api_key={key}"),
     )
     .await
 }
@@ -132,10 +131,7 @@ pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<V
 pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
     let data = get_data::<Value>(
         client,
-        &format!(
-            "http://api.wordnik.com/v4/words.json/randomWord?api_key={}",
-            key
-        ),
+        &format!("{BASE_URL}/words.json/randomWord?api_key={key}"),
     )
     .await?;
     Ok(data["word"]
@@ -146,7 +142,7 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
 }
 
 pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
-    let url = format!("https://api.wordnik.com/v4/word.json/{word}/pronunciations?api_key={key}");
+    let url = format!("{BASE_URL}/word.json/{word}/pronunciations?api_key={key}");
     let res = client.get(url).send().await?.error_for_status()?;
 
     let prons: Vec<Pronunciation> = serde_json::from_str(&res.text().await?)?;
@@ -171,8 +167,7 @@ pub async fn get_related(
     rel_type: RelationshipType,
 ) -> Result<Vec<String>> {
     let url = format!(
-        "https://api.wordnik.com/v4/word.json/{}/relatedWords?&relationshipTypes={}&api_key={}",
-        word, rel_type, key
+        "{BASE_URL}/word.json/{word}/relatedWords?&relationshipTypes={rel_type}&api_key={key}",
     );
     let res = client.get(url).send().await?.error_for_status()?;
 
