@@ -1,5 +1,4 @@
 mod cli;
-mod utils;
 
 use clap::Parser;
 use cli::Args;
@@ -7,7 +6,9 @@ use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
 use serde_json::Value;
-use utils::{get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType};
+use whatyoumean::{
+    get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType,
+};
 
 const BASE_URL: &str = "http://api.wordnik.com/v4";
 
