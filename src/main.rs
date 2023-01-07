@@ -5,9 +5,9 @@ use cli::Args;
 use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
-use serde_json::Value;
 use whatyoumean::{
-    get_data, get_phonetics, get_related, remove_tags, Definition, RelationshipType, WordInfo,
+    get_definitions, get_phonetics, get_random_word, get_related, remove_tags, RelationshipType,
+    WordInfo,
 };
 
 const BASE_URL: &str = "http://api.wordnik.com/v4";
@@ -36,34 +36,17 @@ async fn main() -> Result<()> {
     let key = args.use_key.unwrap_or(std::env::var("WORDNIK_API_KEY")?);
 
     let random_word = if args.random {
-        let data = get_data::<Value>(
-            &client,
-            &format!("{}/words.json/randomWord?api_key={}", BASE_URL, &key),
-        )
-        .await?;
-        let word = data["word"]
-            .to_string()
-            .chars()
-            .filter(|c| *c != '"')
-            .collect::<String>();
-
-        println!("Got \"{}\"", word.if_supports_color(Stdout, |t| t.purple()));
-        word
+        get_random_word(&client, &key).await?
     } else {
         "".to_string()
     };
     let word = &args.word.unwrap_or(random_word);
 
-    let url = format!(
-        "{}/word.json/{}/definitions?api_key={}",
-        BASE_URL, word, key
-    );
-
     if args.json {
-        let info = WordInfo::fetch(word, &client, &url, &key).await?;
+        let info = WordInfo::fetch(word, &client, &key).await?;
         println!("{}", serde_json::to_string_pretty(&info)?)
     } else {
-        let defs: Vec<Definition> = get_data(&client, &url).await?;
+        let defs = get_definitions(&client, word, &key).await?;
 
         if args.phonetics {
             if let Ok(prons) = get_phonetics(&client, word, &key).await {

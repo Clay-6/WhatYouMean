@@ -14,8 +14,8 @@ pub struct WordInfo {
 }
 
 impl WordInfo {
-    pub async fn fetch(word: &str, client: &Client, url: &str, key: &str) -> Result<Self> {
-        let definitions = get_data::<Vec<Definition>>(client, url)
+    pub async fn fetch(word: &str, client: &Client, key: &str) -> Result<Self> {
+        let definitions = get_definitions(client, word, key)
             .await?
             .iter()
             .map(|d| Definition {
@@ -112,13 +112,37 @@ struct Example {
     text: String,
 }
 
-pub async fn get_data<T: for<'a> Deserialize<'a>>(
-    client: &reqwest::Client,
-    url: &str,
-) -> Result<T> {
+async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Result<T> {
     let res = client.get(url).send().await?.error_for_status()?;
 
     Ok(serde_json::from_str(&res.text().await?)?)
+}
+
+pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<Vec<Definition>> {
+    get_data::<Vec<Definition>>(
+        client,
+        &format!(
+            "http://api.wordnik.com/v4/word.json/{}/definitions?api_key={}",
+            word, key
+        ),
+    )
+    .await
+}
+
+pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
+    let data = get_data::<Value>(
+        client,
+        &format!(
+            "http://api.wordnik.com/v4/words.json/randomWord?api_key={}",
+            key
+        ),
+    )
+    .await?;
+    Ok(data["word"]
+        .to_string()
+        .chars()
+        .filter(|c| *c != '"')
+        .collect::<String>())
 }
 
 pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
