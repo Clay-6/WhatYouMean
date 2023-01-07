@@ -1,10 +1,35 @@
 use core::fmt;
 
 use color_eyre::{eyre::Result, Report};
-use serde::Deserialize;
+use reqwest::Client;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize)]
+pub struct WordInfo {
+    definitions: Vec<Definition>,
+    pronunciations: Vec<String>,
+    synonyms: Vec<String>,
+    antonyms: Vec<String>,
+}
+
+impl WordInfo {
+    pub async fn new(word: &str, client: &Client, url: &str, key: &str) -> Result<Self> {
+        let definitions = get_data::<Vec<Definition>>(client, url).await?;
+        let pronunciations = get_phonetics(client, word, key).await?;
+        let synonyms = get_related(client, word, key, RelationshipType::Synonym).await?;
+        let antonyms = get_related(client, word, key, RelationshipType::Antonym).await?;
+
+        Ok(Self {
+            definitions,
+            pronunciations,
+            synonyms,
+            antonyms,
+        })
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Definition {
     text: Option<String>,
@@ -64,7 +89,7 @@ struct Pronunciation {
     raw_type: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Example {
     text: String,
 }
