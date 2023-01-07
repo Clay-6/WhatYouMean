@@ -14,7 +14,7 @@ pub struct WordInfo {
 }
 
 impl WordInfo {
-    pub async fn new(word: &str, client: &Client, url: &str, key: &str) -> Result<Self> {
+    pub async fn fetch(word: &str, client: &Client, url: &str, key: &str) -> Result<Self> {
         let definitions = get_data::<Vec<Definition>>(client, url)
             .await?
             .iter()

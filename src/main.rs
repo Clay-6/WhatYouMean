@@ -60,7 +60,7 @@ async fn main() -> Result<()> {
     );
 
     if args.json {
-        let info = WordInfo::new(word, &client, &url, &key).await?;
+        let info = WordInfo::fetch(word, &client, &url, &key).await?;
         println!("{}", serde_json::to_string_pretty(&info)?)
     } else {
         let defs: Vec<Definition> = get_data(&client, &url).await?;
