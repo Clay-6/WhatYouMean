@@ -47,6 +47,9 @@ async fn main() -> Result<()> {
         let info = WordInfo::fetch(word, &client, &key).await?;
         println!("{}", serde_json::to_string_pretty(&info)?)
     } else {
+        if args.random {
+            println!("Got '{}'", word.if_supports_color(Stdout, |t| t.purple()))
+        }
         let defs = get_definitions(&client, word, &key).await?;
 
         if args.phonetics {
