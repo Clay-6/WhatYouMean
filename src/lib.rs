@@ -7,6 +7,7 @@ use serde_json::Value;
 
 const BASE_URL: &str = "https://api.wordnik.com/v4";
 
+/// Stores all available info for a word
 #[derive(Debug, Serialize)]
 pub struct WordInfo {
     word: String,
@@ -17,6 +18,7 @@ pub struct WordInfo {
 }
 
 impl WordInfo {
+    /// Constructs a [`WordInfo`] by fetching data from Wordnik's API
     pub async fn fetch(word: &str, client: &Client, key: &str) -> Result<Self> {
         let definitions = get_definitions(client, word, key)
             .await?
@@ -51,6 +53,7 @@ impl WordInfo {
     }
 }
 
+/// Info relating to a word's definition
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Definition {
@@ -60,20 +63,24 @@ pub struct Definition {
     example_uses: Vec<Example>,
 }
 
+/// Different types of rationships between words
 pub enum RelationshipType {
     Synonym,
     Antonym,
 }
 
 impl Definition {
+    /// Get the text of a [`Definition`] if it exists
     pub fn text(&self) -> Option<String> {
         self.text.clone()
     }
 
+    /// Get a [`Definition`]'s
     pub fn part_of_speech(&self) -> String {
         self.part_of_speech.clone()
     }
 
+    /// Return a word's top example
     pub fn top_example(&self) -> String {
         if self.example_uses.is_empty() {
             "".into()
@@ -122,6 +129,7 @@ async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Res
     Ok(serde_json::from_str(&res.text().await?)?)
 }
 
+/// Get a [`Vec`] of all a word's available [`Definition`]s
 pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<Vec<Definition>> {
     get_data::<Vec<Definition>>(
         client,
@@ -130,6 +138,7 @@ pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<V
     .await
 }
 
+/// Get a random word
 pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
     let data = get_data::<Value>(
         client,
@@ -143,6 +152,7 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
         .collect::<String>())
 }
 
+/// Get a [`Vec`] of a word's IPA phonetic representations
 pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
     let url = format!("{BASE_URL}/word.json/{word}/pronunciations?api_key={key}");
     let res = client.get(url).send().await?.error_for_status()?;
@@ -162,6 +172,7 @@ pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> R
     }
 }
 
+/// Get words related to a `word` in different ways
 pub async fn get_related(
     client: &reqwest::Client,
     word: &str,
@@ -182,6 +193,7 @@ pub async fn get_related(
         .collect())
 }
 
+/// Remove HTML tags from text
 pub fn remove_tags(txt: &str) -> String {
     let re = regex::Regex::new("<[^>]*>").unwrap();
 
