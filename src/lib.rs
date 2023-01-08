@@ -17,42 +17,6 @@ pub struct WordInfo {
     antonyms: Vec<String>,
 }
 
-impl WordInfo {
-    /// Constructs a [`WordInfo`] by fetching data from Wordnik's API
-    pub async fn fetch(word: &str, client: &Client, key: &str) -> Result<Self> {
-        let definitions = get_definitions(client, word, key)
-            .await?
-            .iter()
-            .map(|d| Definition {
-                text: d.text.as_ref().map(|text| remove_tags(text)),
-                part_of_speech: d.part_of_speech.clone(),
-                example_uses: d.example_uses.clone(),
-            })
-            .collect();
-        let pronunciations = get_phonetics(client, word, key).await.unwrap_or_default();
-        let synonyms = get_related(client, word, key, RelationshipType::Synonym)
-            .await
-            .unwrap_or_default()
-            .iter()
-            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
-            .collect();
-        let antonyms = get_related(client, word, key, RelationshipType::Antonym)
-            .await
-            .unwrap_or_default()
-            .iter()
-            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
-            .collect();
-
-        Ok(Self {
-            word: word.to_owned(),
-            definitions,
-            pronunciations,
-            synonyms,
-            antonyms,
-        })
-    }
-}
-
 /// Info relating to a word's definition
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -67,66 +31,6 @@ pub struct Definition {
 pub enum RelationshipType {
     Synonym,
     Antonym,
-}
-
-impl Definition {
-    /// Get the text of a [`Definition`] if it exists
-    pub fn text(&self) -> Option<String> {
-        self.text.clone()
-    }
-
-    /// Get a [`Definition`]'s
-    pub fn part_of_speech(&self) -> String {
-        self.part_of_speech.clone()
-    }
-
-    /// Return a word's top example
-    pub fn top_example(&self) -> String {
-        if self.example_uses.is_empty() {
-            "".into()
-        } else {
-            self.example_uses
-                .iter()
-                .map(|e| e.text.clone())
-                .collect::<Vec<_>>()[0]
-                .clone()
-        }
-    }
-
-    fn no_pos() -> String {
-        "[None]".into()
-    }
-}
-
-impl fmt::Display for RelationshipType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                RelationshipType::Synonym => "synonym",
-                RelationshipType::Antonym => "antonym",
-            },
-        )
-    }
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Pronunciation {
-    raw: String,
-    raw_type: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct Example {
-    text: String,
-}
-
-async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Result<T> {
-    let res = client.get(url).send().await?.error_for_status()?;
-
-    Ok(serde_json::from_str(&res.text().await?)?)
 }
 
 /// Get a [`Vec`] of all a word's available [`Definition`]s
@@ -198,4 +102,100 @@ pub fn remove_tags(txt: &str) -> String {
     let re = regex::Regex::new("<[^>]*>").unwrap();
 
     re.replace_all(txt, "").to_string()
+}
+
+impl WordInfo {
+    /// Constructs a [`WordInfo`] by fetching data from Wordnik's API
+    pub async fn fetch(word: &str, client: &Client, key: &str) -> Result<Self> {
+        let definitions = get_definitions(client, word, key)
+            .await?
+            .iter()
+            .map(|d| Definition {
+                text: d.text.as_ref().map(|text| remove_tags(text)),
+                part_of_speech: d.part_of_speech.clone(),
+                example_uses: d.example_uses.clone(),
+            })
+            .collect();
+        let pronunciations = get_phonetics(client, word, key).await.unwrap_or_default();
+        let synonyms = get_related(client, word, key, RelationshipType::Synonym)
+            .await
+            .unwrap_or_default()
+            .iter()
+            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
+            .collect();
+        let antonyms = get_related(client, word, key, RelationshipType::Antonym)
+            .await
+            .unwrap_or_default()
+            .iter()
+            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
+            .collect();
+
+        Ok(Self {
+            word: word.to_owned(),
+            definitions,
+            pronunciations,
+            synonyms,
+            antonyms,
+        })
+    }
+}
+
+impl Definition {
+    /// Get the text of a [`Definition`] if it exists
+    pub fn text(&self) -> Option<String> {
+        self.text.clone()
+    }
+
+    /// Get a [`Definition`]'s
+    pub fn part_of_speech(&self) -> String {
+        self.part_of_speech.clone()
+    }
+
+    /// Return a word's top example
+    pub fn top_example(&self) -> String {
+        if self.example_uses.is_empty() {
+            "".into()
+        } else {
+            self.example_uses
+                .iter()
+                .map(|e| e.text.clone())
+                .collect::<Vec<_>>()[0]
+                .clone()
+        }
+    }
+
+    fn no_pos() -> String {
+        "[None]".into()
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Pronunciation {
+    raw: String,
+    raw_type: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Example {
+    text: String,
+}
+
+async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Result<T> {
+    let res = client.get(url).send().await?.error_for_status()?;
+
+    Ok(serde_json::from_str(&res.text().await?)?)
+}
+
+impl fmt::Display for RelationshipType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                RelationshipType::Synonym => "synonym",
+                RelationshipType::Antonym => "antonym",
+            },
+        )
+    }
 }
