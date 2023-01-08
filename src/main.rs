@@ -15,23 +15,27 @@ use whatyoumean::{
 
 #[tokio::main]
 async fn main() {
-    color_eyre::install().unwrap();
+    if let Err(e) = color_eyre::install() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1)
+    }
 
-    let args = Args::parse();
-
-    std::process::exit(match do_main(args).await {
-        Ok(()) => 0,
+    std::process::exit(match dym().await {
+        Ok(_) => 0,
         Err(e) => {
             eprintln!(
-                "{}",
-                format!("Error: {}", e).if_supports_color(Stderr, |t| t.red())
+                "{}: {}",
+                "Error".if_supports_color(Stderr, |t| t.red()).bold(),
+                e
             );
             1
         }
     })
 }
 
-async fn do_main(mut args: Args) -> Result<()> {
+/// Run the actual application
+async fn dym() -> Result<()> {
+    let mut args = Args::parse();
     let client = Client::new();
 
     if args.verbose {
@@ -57,7 +61,9 @@ async fn do_main(mut args: Args) -> Result<()> {
     };
     let word = &args.word.unwrap_or(random_word);
     if word.is_empty() {
-        return Err(eyre!("No word supplied"));
+        return Err(eyre!(
+            "No word supplied. `--random` can be used to search for a random word"
+        ));
     }
 
     if args.json {
