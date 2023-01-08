@@ -9,6 +9,7 @@ const BASE_URL: &str = "https://api.wordnik.com/v4";
 
 #[derive(Debug, Serialize)]
 pub struct WordInfo {
+    word: String,
     definitions: Vec<Definition>,
     pronunciations: Vec<String>,
     synonyms: Vec<String>,
@@ -41,6 +42,7 @@ impl WordInfo {
             .collect();
 
         Ok(Self {
+            word: word.to_owned(),
             definitions,
             pronunciations,
             synonyms,
