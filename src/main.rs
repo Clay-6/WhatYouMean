@@ -3,7 +3,10 @@ mod cli;
 use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::{eyre, Result};
-use owo_colors::{OwoColorize, Stream::Stdout};
+use owo_colors::{
+    OwoColorize,
+    Stream::{Stderr, Stdout},
+};
 use reqwest::Client;
 use whatyoumean::{
     get_definitions, get_phonetics, get_random_word, get_related, remove_tags, RelationshipType,
@@ -11,10 +14,24 @@ use whatyoumean::{
 };
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    color_eyre::install()?;
+async fn main() {
+    color_eyre::install().unwrap();
 
-    let mut args = Args::parse();
+    let args = Args::parse();
+
+    std::process::exit(match do_main(args).await {
+        Ok(()) => 0,
+        Err(e) => {
+            eprintln!(
+                "{}",
+                format!("Error: {}", e).if_supports_color(Stderr, |t| t.red())
+            );
+            1
+        }
+    })
+}
+
+async fn do_main(mut args: Args) -> Result<()> {
     let client = Client::new();
 
     if args.verbose {
