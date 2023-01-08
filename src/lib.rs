@@ -59,14 +59,7 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
 /// Get a [`Vec`] of a word's IPA phonetic representations
 pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
     let url = format!("{BASE_URL}/word.json/{word}/pronunciations?api_key={key}");
-    let res = client
-        .get(url)
-        .send()
-        .await?
-        .error_for_status()
-        .map_err(|e| e.without_url())?;
-
-    let prons: Vec<Pronunciation> = serde_json::from_str(&res.text().await?)?;
+    let prons = get_data::<Vec<Pronunciation>>(client, &url).await?;
 
     let ipa_prons = prons
         .iter()
@@ -83,7 +76,7 @@ pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> R
 
 /// Get words related to a `word` in different ways
 pub async fn get_related(
-    client: &reqwest::Client,
+    client: &Client,
     word: &str,
     key: &str,
     rel_type: RelationshipType,
@@ -91,14 +84,7 @@ pub async fn get_related(
     let url = format!(
         "{BASE_URL}/word.json/{word}/relatedWords?&relationshipTypes={rel_type}&api_key={key}",
     );
-    let res = client
-        .get(url)
-        .send()
-        .await?
-        .error_for_status()
-        .map_err(|e| e.without_url())?;
-
-    let val: Value = serde_json::from_str(&res.text().await?)?;
+    let val = get_data::<Value>(client, &url).await?;
     Ok(val[0]["words"]
         .as_array()
         .unwrap()
