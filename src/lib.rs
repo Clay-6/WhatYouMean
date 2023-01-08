@@ -59,7 +59,12 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
 /// Get a [`Vec`] of a word's IPA phonetic representations
 pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
     let url = format!("{BASE_URL}/word.json/{word}/pronunciations?api_key={key}");
-    let res = client.get(url).send().await?.error_for_status()?;
+    let res = client
+        .get(url)
+        .send()
+        .await?
+        .error_for_status()
+        .map_err(|e| e.without_url())?;
 
     let prons: Vec<Pronunciation> = serde_json::from_str(&res.text().await?)?;
 
@@ -86,7 +91,12 @@ pub async fn get_related(
     let url = format!(
         "{BASE_URL}/word.json/{word}/relatedWords?&relationshipTypes={rel_type}&api_key={key}",
     );
-    let res = client.get(url).send().await?.error_for_status()?;
+    let res = client
+        .get(url)
+        .send()
+        .await?
+        .error_for_status()
+        .map_err(|e| e.without_url())?;
 
     let val: Value = serde_json::from_str(&res.text().await?)?;
     Ok(val[0]["words"]
@@ -182,7 +192,12 @@ struct Example {
 }
 
 async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Result<T> {
-    let res = client.get(url).send().await?.error_for_status()?;
+    let res = client
+        .get(url)
+        .send()
+        .await?
+        .error_for_status()
+        .map_err(|e| e.without_url())?;
 
     Ok(serde_json::from_str(&res.text().await?)?)
 }
