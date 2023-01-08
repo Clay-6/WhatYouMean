@@ -2,7 +2,7 @@ mod cli;
 
 use clap::Parser;
 use cli::Args;
-use color_eyre::eyre::Result;
+use color_eyre::eyre::{eyre, Result};
 use owo_colors::{OwoColorize, Stream::Stdout};
 use reqwest::Client;
 use whatyoumean::{
@@ -36,9 +36,12 @@ async fn main() -> Result<()> {
     let random_word = if args.random {
         get_random_word(&client, &key).await?
     } else {
-        "".to_string()
+        "".into()
     };
     let word = &args.word.unwrap_or(random_word);
+    if word.is_empty() {
+        return Err(eyre!("No word supplied"));
+    }
 
     if args.json {
         let info = WordInfo::fetch(word, &client, &key).await?;
