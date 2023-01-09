@@ -52,7 +52,9 @@ async fn dym() -> Result<()> {
         owo_colors::set_override(false);
     }
 
-    let key = args.use_key.unwrap_or(std::env::var("WORDNIK_API_KEY")?);
+    let key = args
+        .use_key
+        .unwrap_or(std::env::var("WORDNIK_API_KEY").map_err(|e| eyre!("`WORDNIK_API_KEY` {}", e))?);
 
     let random_word = if args.random {
         get_random_word(&client, &key).await?
