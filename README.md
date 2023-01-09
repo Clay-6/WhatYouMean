@@ -35,8 +35,3 @@ and you're all set!
 
 Download the [latest release from GitHub](https://github.com/Clay-6/WhatYouMean) & move the
 executable to a directory on your `PATH`. Currently, only Windows binaries are distributed.
-
-### Windows Installer
-
-Download & run the installer from the [latest GitHub release](https://github.com/Clay-6/WhatYouMean).
-All necessary changes to your `PATH` will be made by the installer.
