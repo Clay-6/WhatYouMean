@@ -10,7 +10,7 @@ pub struct Args {
     #[clap(long)]
     pub use_key: Option<String>,
     /// Search for a random word
-    #[clap(short, long)]
+    #[clap(long)]
     pub random: bool,
     /// The maximum amount of definitions to
     /// display
