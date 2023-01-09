@@ -56,15 +56,10 @@ async fn dym() -> Result<()> {
         .use_key
         .unwrap_or(std::env::var("WORDNIK_API_KEY").map_err(|e| eyre!("`WORDNIK_API_KEY` {}", e))?);
 
-    let random_word = if args.random {
-        get_random_word(&client, &key).await?
-    } else {
-        "".into()
-    };
     let word = if let Some(wrd) = args.word {
         wrd
     } else if args.random {
-        random_word
+        get_random_word(&client, &key).await?
     } else {
         return Err(eyre!(
             "No word supplied. `--random` can be used to search for a random word"
