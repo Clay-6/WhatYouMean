@@ -18,7 +18,7 @@ for more detailed usage instructions
 ### Universal Setup
 
 Get a Wordnik API key [here](https://developer.wordnik.com/) and store it in an environment variable named
-`WORDNIK_API_KEY`.
+`WORDNIK_API_KEY`. Then, instal the program from either [`cargo`](#through-cargo) or a [prebuilt binary](#prebuilt-binary)
 
 ### Through Cargo
 
@@ -31,7 +31,25 @@ cargo install whatyoumean
 
 and you're all set!
 
-### Manual
+### Prebuilt Binary
 
 Download the [latest release from GitHub](https://github.com/Clay-6/WhatYouMean) & move the
 executable to a directory on your `PATH`. Currently, only Windows binaries are distributed.
+
+## Building From Source
+
+Ensure you have the [Rust toolchain](https://rustup.rs) installed.
+
+`git clone` the repository, then run
+
+```shell
+cargo build 
+```
+
+for a debug build, or
+
+```shell
+cargo build --release
+```
+
+for a release build
