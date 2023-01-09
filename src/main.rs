@@ -61,24 +61,27 @@ async fn dym() -> Result<()> {
     } else {
         "".into()
     };
-    let word = &args.word.unwrap_or(random_word);
-    if word.is_empty() {
+    let word = if let Some(wrd) = args.word {
+        wrd
+    } else if args.random {
+        random_word
+    } else {
         return Err(eyre!(
             "No word supplied. `--random` can be used to search for a random word"
         ));
-    }
+    };
 
     if args.json {
-        let info = WordInfo::fetch(word, &client, &key).await?;
+        let info = WordInfo::fetch(&word, &client, &key).await?;
         println!("{}", serde_json::to_string_pretty(&info)?)
     } else {
         if args.random {
             println!("Got '{}'", word.if_supports_color(Stdout, |t| t.purple()))
         }
-        let defs = get_definitions(&client, word, &key).await?;
+        let defs = get_definitions(&client, &word, &key).await?;
 
         if args.phonetics {
-            if let Ok(prons) = get_phonetics(&client, word, &key).await {
+            if let Ok(prons) = get_phonetics(&client, &word, &key).await {
                 print!("{}", prons[0].if_supports_color(Stdout, |t| t.yellow()));
                 for p in prons.iter().skip(1) {
                     print!(", {}", p.if_supports_color(Stdout, |t| t.yellow()));
@@ -130,7 +133,7 @@ async fn dym() -> Result<()> {
         }
 
         if args.synonyms {
-            if let Ok(syns) = get_related(&client, word, &key, RelationshipType::Synonym).await {
+            if let Ok(syns) = get_related(&client, &word, &key, RelationshipType::Synonym).await {
                 print!(
                     "Synonyms: {}",
                     syns[0].if_supports_color(Stdout, |t| t.yellow())
@@ -151,7 +154,7 @@ async fn dym() -> Result<()> {
         }
 
         if args.antonyms {
-            if let Ok(ants) = get_related(&client, word, &key, RelationshipType::Antonym).await {
+            if let Ok(ants) = get_related(&client, &word, &key, RelationshipType::Antonym).await {
                 print!(
                     "Antonyms: {}",
                     ants[0].if_supports_color(Stdout, |t| t.yellow())
