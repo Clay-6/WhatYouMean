@@ -33,8 +33,8 @@ and you're all set!
 
 ### Prebuilt Binary
 
-Download the [latest release from GitHub](https://github.com/Clay-6/WhatYouMean) & move the
-executable to a directory on your `PATH`. Currently, only Windows binaries are distributed.
+Download the [latest release from GitHub](https://github.com/Clay-6/WhatYouMean) & exctract the
+executable to a directory on your `PATH`.
 
 ## Building From Source
 
