@@ -52,9 +52,11 @@ async fn dym() -> Result<()> {
         owo_colors::set_override(false);
     }
 
-    let key = args
-        .use_key
-        .unwrap_or(std::env::var("WORDNIK_API_KEY").map_err(|e| eyre!("`WORDNIK_API_KEY` {}", e))?);
+    let key = if let Some(key) = args.use_key {
+        key
+    } else {
+        std::env::var("WORDNIK_API_KEY").map_err(|e| eyre!("`WORDNIK_API_KEY` {}", e))?
+    };
 
     let word = if let Some(wrd) = args.word {
         wrd
