@@ -33,7 +33,7 @@ and you're all set!
 
 ### Prebuilt Binary
 
-Download the [latest release from GitHub](https://github.com/Clay-6/WhatYouMean) & exctract the
+Download the [latest release from GitHub](https://github.com/Clay-6/WhatYouMean/releases/latest) & exctract the
 executable to a directory on your `PATH`.
 
 ## Building From Source
