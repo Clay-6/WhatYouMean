@@ -16,7 +16,7 @@ use whatyoumean::{
 #[tokio::main]
 async fn main() {
     if let Err(e) = color_eyre::install() {
-        eprintln!("Error: {}", e);
+        eprintln!("Error: {e}");
         std::process::exit(1)
     }
 
@@ -25,7 +25,9 @@ async fn main() {
         Err(e) => {
             eprintln!(
                 "{}: {}",
-                "Error".if_supports_color(Stderr, |t| t.red()).bold(),
+                "Error"
+                    .if_supports_color(Stderr, owo_colors::OwoColorize::red)
+                    .bold(),
                 e
             );
             1
@@ -70,27 +72,36 @@ async fn dym() -> Result<()> {
 
     if args.json {
         let info = WordInfo::fetch(&word, &client, &key).await?;
-        println!("{}", serde_json::to_string_pretty(&info)?)
+        println!("{}", serde_json::to_string_pretty(&info)?);
     } else {
         if args.random {
-            println!("Got '{}'", word.if_supports_color(Stdout, |t| t.purple()))
+            println!(
+                "Got '{}'",
+                word.if_supports_color(Stdout, owo_colors::OwoColorize::purple)
+            );
         }
         let defs = get_definitions(&client, &word, &key).await?;
 
         if args.phonetics {
             if let Ok(prons) = get_phonetics(&client, &word, &key).await {
-                print!("{}", prons[0].if_supports_color(Stdout, |t| t.yellow()));
+                print!(
+                    "{}",
+                    prons[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                );
                 for p in prons.iter().skip(1) {
-                    print!(", {}", p.if_supports_color(Stdout, |t| t.yellow()));
+                    print!(
+                        ", {}",
+                        p.if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                    );
                 }
                 println!("\n");
             } else {
                 println!(
                     "{}\n",
                     "[No phonetics available]"
-                        .if_supports_color(Stdout, |t| t.red())
+                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
                         .italic()
-                )
+                );
             }
         }
 
@@ -104,10 +115,10 @@ async fn dym() -> Result<()> {
             println!(
                 "{} {} - {}",
                 format!("{}.", i + 1)
-                    .if_supports_color(Stdout, |t| t.cyan())
+                    .if_supports_color(Stdout, owo_colors::OwoColorize::cyan)
                     .bold(),
                 def.part_of_speech()
-                    .if_supports_color(Stdout, |t| t.magenta()),
+                    .if_supports_color(Stdout, owo_colors::OwoColorize::magenta),
                 text
             );
             if args.examples {
@@ -116,15 +127,15 @@ async fn dym() -> Result<()> {
                     println!(
                         "{}",
                         "[No example]"
-                            .if_supports_color(Stdout, |t| t.red())
+                            .if_supports_color(Stdout, owo_colors::OwoColorize::red)
                             .italic()
                     );
                 } else {
                     println!(
                         "{}",
                         format!("e.g. {}", def.top_example())
-                            .if_supports_color(Stdout, |t| t.green())
-                    )
+                            .if_supports_color(Stdout, owo_colors::OwoColorize::green)
+                    );
                 }
             }
         }
@@ -133,20 +144,23 @@ async fn dym() -> Result<()> {
             if let Ok(syns) = get_related(&client, &word, &key, RelationshipType::Synonym).await {
                 print!(
                     "Synonyms: {}",
-                    syns[0].if_supports_color(Stdout, |t| t.yellow())
+                    syns[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
                 );
                 for syn in syns.iter().skip(1) {
-                    print!(", {}", syn.if_supports_color(Stdout, |t| t.yellow()))
+                    print!(
+                        ", {}",
+                        syn.if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                    );
                 }
 
-                println!()
+                println!();
             } else {
                 println!(
                     "{}",
                     "[No synonyms available]"
-                        .if_supports_color(Stdout, |t| t.red())
+                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
                         .italic()
-                )
+                );
             }
         }
 
@@ -154,20 +168,23 @@ async fn dym() -> Result<()> {
             if let Ok(ants) = get_related(&client, &word, &key, RelationshipType::Antonym).await {
                 print!(
                     "Antonyms: {}",
-                    ants[0].if_supports_color(Stdout, |t| t.yellow())
+                    ants[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
                 );
                 for ant in ants.iter().skip(1) {
-                    print!(", {}", ant.if_supports_color(Stdout, |t| t.yellow()))
+                    print!(
+                        ", {}",
+                        ant.if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                    );
                 }
 
-                println!()
+                println!();
             } else {
                 println!(
                     "{}",
                     "[No antonyms available]"
-                        .if_supports_color(Stdout, |t| t.red())
+                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
                         .italic()
-                )
+                );
             }
         }
     }
