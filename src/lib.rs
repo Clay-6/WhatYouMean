@@ -56,6 +56,19 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
         .collect::<String>())
 }
 
+pub async fn get_wotd(client: &Client, key: &str) -> Result<String> {
+    let data = get_data::<Value>(
+        client,
+        &format!("{BASE_URL}/words.json/wordOfTheDay?api_key={key}"),
+    )
+    .await?;
+    Ok(data["word"]
+        .to_string()
+        .chars()
+        .filter(|&c| c != '"')
+        .collect())
+}
+
 /// Get a [`Vec`] of a word's IPA phonetic representations
 pub async fn get_phonetics(client: &reqwest::Client, word: &str, key: &str) -> Result<Vec<String>> {
     let url = format!("{BASE_URL}/word.json/{word}/pronunciations?api_key={key}");

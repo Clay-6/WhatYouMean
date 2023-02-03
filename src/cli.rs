@@ -37,4 +37,7 @@ pub struct Args {
     /// Output all data for a word in JSON format
     #[clap(long)]
     pub json: bool,
+    /// Fetch info for Wordnik's Word of the Day
+    #[clap(long)]
+    pub wotd: bool,
 }

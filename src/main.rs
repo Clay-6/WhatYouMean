@@ -8,7 +8,7 @@ use owo_colors::{
     Stream::{Stderr, Stdout},
 };
 use reqwest::Client;
-use whatyoumean::{get_random_word, remove_tags, WordInfo};
+use whatyoumean::{get_random_word, get_wotd, remove_tags, WordInfo};
 
 #[tokio::main]
 async fn main() {
@@ -61,6 +61,8 @@ async fn dym() -> Result<()> {
         wrd
     } else if args.random {
         get_random_word(&client, &key).await?
+    } else if args.wotd {
+        get_wotd(&client, &key).await?
     } else {
         return Err(eyre!(
             "No word supplied. `--random` can be used to search for a random word"
@@ -76,6 +78,11 @@ async fn dym() -> Result<()> {
                 "Got '{}'",
                 word.if_supports_color(Stdout, owo_colors::OwoColorize::purple)
             );
+        } else if args.wotd {
+            println!(
+                "Word of the Day is '{}'",
+                word.if_supports_color(Stdout, owo_colors::OwoColorize::purple)
+            )
         }
 
         if args.phonetics {
