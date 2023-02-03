@@ -134,6 +134,31 @@ impl WordInfo {
             antonyms,
         })
     }
+
+    /// Get the word `self` is for
+    pub fn word(&self) -> &str {
+        &self.word
+    }
+
+    /// Get the word's pronunciations
+    pub fn pronunciations(&self) -> &[String] {
+        &self.pronunciations
+    }
+
+    /// Get the word's definitions as [`Definition`] structs
+    pub fn definitions(&self) -> &[Definition] {
+        &self.definitions
+    }
+
+    /// Get the word's synonyms
+    pub fn synonyms(&self) -> &[String] {
+        &self.synonyms
+    }
+
+    /// Get the word's antonyms
+    pub fn antonyms(&self) -> &[String] {
+        &self.antonyms
+    }
 }
 
 impl Definition {
@@ -145,6 +170,10 @@ impl Definition {
     /// Get a [`Definition`]'s
     pub fn part_of_speech(&self) -> String {
         self.part_of_speech.clone()
+    }
+
+    pub fn examples(&self) -> Vec<String> {
+        self.example_uses.iter().map(|e| e.text.clone()).collect()
     }
 
     /// Return a word's top example
