@@ -8,10 +8,7 @@ use owo_colors::{
     Stream::{Stderr, Stdout},
 };
 use reqwest::Client;
-use whatyoumean::{
-    get_definitions, get_phonetics, get_random_word, get_related, remove_tags, RelationshipType,
-    WordInfo,
-};
+use whatyoumean::{get_random_word, remove_tags, WordInfo};
 
 #[tokio::main]
 async fn main() {
@@ -70,8 +67,8 @@ async fn dym() -> Result<()> {
         ));
     };
 
+    let info = WordInfo::fetch(&word, &client, &key).await?;
     if args.json {
-        let info = WordInfo::fetch(&word, &client, &key).await?;
         println!("{}", serde_json::to_string_pretty(&info)?);
     } else {
         if args.random {
@@ -80,14 +77,10 @@ async fn dym() -> Result<()> {
                 word.if_supports_color(Stdout, owo_colors::OwoColorize::purple)
             );
         }
-        let defs = get_definitions(&client, &word, &key).await?;
 
         if args.phonetics {
-            if let Ok(prons) = get_phonetics(&client, &word, &key).await {
-                print!(
-                    "{}",
-                    prons[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
-                );
+            let prons = info.pronunciations();
+            if !prons.is_empty() {
                 for p in prons.iter().skip(1) {
                     print!(
                         ", {}",
@@ -105,7 +98,8 @@ async fn dym() -> Result<()> {
             }
         }
 
-        for (i, def) in defs
+        for (i, def) in info
+            .definitions()
             .iter()
             .filter(|d| d.text().is_some())
             .enumerate()
@@ -141,7 +135,8 @@ async fn dym() -> Result<()> {
         }
 
         if args.synonyms {
-            if let Ok(syns) = get_related(&client, &word, &key, RelationshipType::Synonym).await {
+            let syns = info.synonyms();
+            if !syns.is_empty() {
                 print!(
                     "Synonyms: {}",
                     syns[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
@@ -165,7 +160,8 @@ async fn dym() -> Result<()> {
         }
 
         if args.antonyms {
-            if let Ok(ants) = get_related(&client, &word, &key, RelationshipType::Antonym).await {
+            let ants = info.antonyms();
+            if !ants.is_empty() {
                 print!(
                     "Antonyms: {}",
                     ants[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
