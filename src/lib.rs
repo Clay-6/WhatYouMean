@@ -52,8 +52,8 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
     Ok(data["word"]
         .to_string()
         .chars()
-        .filter(|c| *c != '"')
-        .collect::<String>())
+        .filter(|&c| c != '"')
+        .collect())
 }
 
 pub async fn get_wotd(client: &Client, key: &str) -> Result<String> {
@@ -130,13 +130,13 @@ impl WordInfo {
             .await
             .unwrap_or_default()
             .iter()
-            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
+            .map(|s| s.chars().filter(|&c| c != '"').collect::<String>())
             .collect();
         let antonyms = get_related(client, word, key, RelationshipType::Antonym)
             .await
             .unwrap_or_default()
             .iter()
-            .map(|s| s.chars().filter(|c| *c != '"').collect::<String>())
+            .map(|s| s.chars().filter(|&c| c != '"').collect::<String>())
             .collect();
 
         Ok(Self {
