@@ -1,4 +1,5 @@
 mod cli;
+mod utils;
 
 use clap::Parser;
 use cli::Args;
@@ -8,7 +9,7 @@ use owo_colors::{
     Stream::{Stderr, Stdout},
 };
 use reqwest::Client;
-use whatyoumean::{get_random_word, get_wotd, remove_tags, WordInfo};
+use utils::{get_random_word, get_wotd, remove_tags, WordInfo};
 
 #[tokio::main]
 async fn main() {
