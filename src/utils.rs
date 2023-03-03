@@ -169,11 +169,6 @@ impl WordInfo {
         })
     }
 
-    /// Get the word `self` is for
-    pub fn word(&self) -> &str {
-        &self.word
-    }
-
     /// Get the word's pronunciations
     pub fn pronunciations(&self) -> &[String] {
         &self.pronunciations
@@ -208,10 +203,6 @@ impl Definition {
     /// Get a [`Definition`]'s
     pub fn part_of_speech(&self) -> String {
         self.part_of_speech.clone()
-    }
-
-    pub fn examples(&self) -> Vec<String> {
-        self.example_uses.iter().map(|e| e.text.clone()).collect()
     }
 
     /// Return a word's top example
