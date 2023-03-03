@@ -22,9 +22,7 @@ async fn main() {
         Err(e) => {
             eprintln!(
                 "{}: {}",
-                "Error"
-                    .if_supports_color(Stderr, owo_colors::OwoColorize::red)
-                    .bold(),
+                "Error".if_supports_color(Stderr, OwoColorize::red).bold(),
                 e
             );
             1
@@ -76,12 +74,12 @@ async fn dym() -> Result<()> {
         if args.random {
             println!(
                 "Got '{}'",
-                word.if_supports_color(Stdout, owo_colors::OwoColorize::purple)
+                word.if_supports_color(Stdout, OwoColorize::purple)
             );
         } else if args.wotd {
             println!(
                 "Word of the Day is '{}'",
-                word.if_supports_color(Stdout, owo_colors::OwoColorize::purple)
+                word.if_supports_color(Stdout, OwoColorize::purple)
             )
         }
 
@@ -90,20 +88,17 @@ async fn dym() -> Result<()> {
             if !prons.is_empty() {
                 print!(
                     "{}",
-                    prons[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                    prons[0].if_supports_color(Stdout, OwoColorize::yellow)
                 );
                 for p in prons.iter().skip(1) {
-                    print!(
-                        ", {}",
-                        p.if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
-                    );
+                    print!(", {}", p.if_supports_color(Stdout, OwoColorize::yellow));
                 }
                 println!("\n");
             } else {
                 println!(
                     "{}\n",
                     "[No phonetics available]"
-                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
+                        .if_supports_color(Stdout, OwoColorize::red)
                         .italic()
                 );
             }
@@ -115,7 +110,7 @@ async fn dym() -> Result<()> {
                 println!(
                     "{}\n",
                     "[No syllables available]"
-                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
+                        .if_supports_color(Stdout, OwoColorize::red)
                         .italic()
                 )
             } else {
@@ -138,10 +133,10 @@ async fn dym() -> Result<()> {
             println!(
                 "{} {} - {}",
                 format!("{}.", i + 1)
-                    .if_supports_color(Stdout, owo_colors::OwoColorize::cyan)
+                    .if_supports_color(Stdout, OwoColorize::cyan)
                     .bold(),
                 def.part_of_speech()
-                    .if_supports_color(Stdout, owo_colors::OwoColorize::magenta),
+                    .if_supports_color(Stdout, OwoColorize::magenta),
                 text
             );
             if args.examples {
@@ -150,14 +145,14 @@ async fn dym() -> Result<()> {
                     println!(
                         "{}",
                         "[No example]"
-                            .if_supports_color(Stdout, owo_colors::OwoColorize::red)
+                            .if_supports_color(Stdout, OwoColorize::red)
                             .italic()
                     );
                 } else {
                     println!(
                         "{}",
                         format!("e.g. {}", def.top_example())
-                            .if_supports_color(Stdout, owo_colors::OwoColorize::green)
+                            .if_supports_color(Stdout, OwoColorize::green)
                     );
                 }
             }
@@ -168,13 +163,10 @@ async fn dym() -> Result<()> {
             if !syns.is_empty() {
                 print!(
                     "Synonyms: {}",
-                    syns[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                    syns[0].if_supports_color(Stdout, OwoColorize::yellow)
                 );
                 for syn in syns.iter().skip(1) {
-                    print!(
-                        ", {}",
-                        syn.if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
-                    );
+                    print!(", {}", syn.if_supports_color(Stdout, OwoColorize::yellow));
                 }
 
                 println!();
@@ -182,7 +174,7 @@ async fn dym() -> Result<()> {
                 println!(
                     "{}",
                     "[No synonyms available]"
-                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
+                        .if_supports_color(Stdout, OwoColorize::red)
                         .italic()
                 );
             }
@@ -193,13 +185,10 @@ async fn dym() -> Result<()> {
             if !ants.is_empty() {
                 print!(
                     "Antonyms: {}",
-                    ants[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                    ants[0].if_supports_color(Stdout, OwoColorize::yellow)
                 );
                 for ant in ants.iter().skip(1) {
-                    print!(
-                        ", {}",
-                        ant.if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
-                    );
+                    print!(", {}", ant.if_supports_color(Stdout, OwoColorize::yellow));
                 }
 
                 println!();
@@ -207,7 +196,7 @@ async fn dym() -> Result<()> {
                 println!(
                     "{}",
                     "[No antonyms available]"
-                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
+                        .if_supports_color(Stdout, OwoColorize::red)
                         .italic()
                 );
             }
