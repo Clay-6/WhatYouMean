@@ -137,7 +137,13 @@ impl WordInfo {
             .map(|d| Definition {
                 text: d.text.as_ref().map(|text| remove_tags(text)),
                 part_of_speech: d.part_of_speech.clone(),
-                example_uses: d.example_uses.clone(),
+                example_uses: d
+                    .example_uses
+                    .iter()
+                    .map(|e| Example {
+                        text: remove_tags(&e.text),
+                    })
+                    .collect(),
             })
             .collect();
         let pronunciations = pronunciations.unwrap_or_default();

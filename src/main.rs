@@ -95,6 +95,7 @@ async fn dym() -> Result<()> {
                 for p in prons.iter().skip(1) {
                     print!(", {}", p.if_supports_color(Stdout, OwoColorize::yellow));
                 }
+                println!();
             } else {
                 println!(
                     "{}",
@@ -125,10 +126,9 @@ async fn dym() -> Result<()> {
                         s.if_supports_color(Stdout, OwoColorize::bright_yellow)
                     )
                 }
+                println!();
             }
         }
-
-        println!("\n");
 
         for (i, def) in info
             .definitions()
