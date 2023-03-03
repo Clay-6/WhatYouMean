@@ -114,9 +114,15 @@ async fn dym() -> Result<()> {
                         .italic()
                 )
             } else {
-                print!("Syllables: {}", syls[0]);
+                print!(
+                    "Syllables: {}",
+                    syls[0].if_supports_color(Stdout, OwoColorize::bright_yellow)
+                );
                 for s in syls.iter().skip(1) {
-                    print!(" - {s}")
+                    print!(
+                        " - {}",
+                        s.if_supports_color(Stdout, OwoColorize::bright_yellow)
+                    )
                 }
                 println!("\n")
             }
