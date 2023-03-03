@@ -119,25 +119,9 @@ async fn dym() -> Result<()> {
                         .italic()
                 )
             } else {
-                print!(
-                    "Syllables: {} {}",
-                    syls[0].text,
-                    if let Some(t) = syls[0].ty.clone() {
-                        format!("({t})")
-                    } else {
-                        String::new()
-                    }
-                );
+                print!("Syllables: {}", syls[0]);
                 for s in syls.iter().skip(1) {
-                    print!(
-                        " - {} {}",
-                        s.text,
-                        if let Some(t) = s.ty.clone() {
-                            format!("({t})")
-                        } else {
-                            String::new()
-                        }
-                    )
+                    print!(" - {s}")
                 }
                 println!("\n")
             }

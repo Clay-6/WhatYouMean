@@ -36,9 +36,9 @@ pub enum RelationshipType {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Syllable {
-    pub text: String,
+    text: String,
     #[serde(rename = "type")]
-    pub ty: Option<String>,
+    ty: Option<String>,
 }
 
 /// Get a [`Vec`] of all a word's available [`Definition`]s
@@ -264,6 +264,21 @@ impl fmt::Display for RelationshipType {
                 RelationshipType::Synonym => "synonym",
                 RelationshipType::Antonym => "antonym",
             },
+        )
+    }
+}
+
+impl fmt::Display for Syllable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} {}",
+            self.text,
+            if let Some(t) = &self.ty {
+                format!("({t})")
+            } else {
+                String::new()
+            }
         )
     }
 }
