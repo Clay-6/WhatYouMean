@@ -124,8 +124,15 @@ pub fn remove_tags(txt: &str) -> String {
 impl WordInfo {
     /// Constructs a [`WordInfo`] by fetching data from Wordnik's API
     pub async fn fetch(word: &str, client: &Client, key: &str) -> Result<Self> {
-        let definitions = get_definitions(client, word, key)
-            .await?
+        let syl_url = format!("{BASE_URL}/word.json/{word}/hyphenation?api_key={key}");
+        let (definitions, pronunciations, synonyms, antonyms, syllables) = tokio::join!(
+            get_definitions(client, word, key),
+            get_phonetics(client, word, key),
+            get_related(client, word, key, RelationshipType::Synonym),
+            get_related(client, word, key, RelationshipType::Antonym),
+            get_data::<Vec<Syllable>>(client, &syl_url,)
+        );
+        let definitions = definitions?
             .iter()
             .map(|d| Definition {
                 text: d.text.as_ref().map(|text| remove_tags(text)),
@@ -133,31 +140,25 @@ impl WordInfo {
                 example_uses: d.example_uses.clone(),
             })
             .collect();
-        let pronunciations = get_phonetics(client, word, key).await.unwrap_or_default();
-        let synonyms = get_related(client, word, key, RelationshipType::Synonym)
-            .await
+        let pronunciations = pronunciations.unwrap_or_default();
+        let synonyms = synonyms
             .unwrap_or_default()
             .iter()
             .map(|s| s.chars().filter(|&c| c != '"').collect::<String>())
             .collect();
-        let antonyms = get_related(client, word, key, RelationshipType::Antonym)
-            .await
+        let antonyms = antonyms
             .unwrap_or_default()
             .iter()
             .map(|s| s.chars().filter(|&c| c != '"').collect::<String>())
             .collect();
-        let syllables = get_data::<Vec<Syllable>>(
-            client,
-            &format!("{BASE_URL}/word.json/{word}/hyphenation?api_key={key}"),
-        )
-        .await
-        .unwrap_or_default()
-        .iter()
-        .map(|s| Syllable {
-            text: remove_tags(&s.text),
-            ty: s.ty.clone(),
-        })
-        .collect();
+        let syllables = syllables
+            .unwrap_or_default()
+            .iter()
+            .map(|s| Syllable {
+                text: remove_tags(&s.text),
+                ty: s.ty.clone(),
+            })
+            .collect();
 
         Ok(Self {
             word: word.to_owned(),

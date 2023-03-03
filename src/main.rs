@@ -42,6 +42,7 @@ async fn dym() -> Result<()> {
             examples: true,
             antonyms: true,
             synonyms: true,
+            syllables: true,
             ..args
         };
     }
@@ -94,10 +95,9 @@ async fn dym() -> Result<()> {
                 for p in prons.iter().skip(1) {
                     print!(", {}", p.if_supports_color(Stdout, OwoColorize::yellow));
                 }
-                println!("\n");
             } else {
                 println!(
-                    "{}\n",
+                    "{}",
                     "[No phonetics available]"
                         .if_supports_color(Stdout, OwoColorize::red)
                         .italic()
@@ -109,7 +109,7 @@ async fn dym() -> Result<()> {
             let syls = info.syllables();
             if syls.is_empty() {
                 println!(
-                    "{}\n",
+                    "{}",
                     "[No syllables available]"
                         .if_supports_color(Stdout, OwoColorize::red)
                         .italic()
@@ -125,9 +125,10 @@ async fn dym() -> Result<()> {
                         s.if_supports_color(Stdout, OwoColorize::bright_yellow)
                     )
                 }
-                println!("\n")
             }
         }
+
+        println!("\n");
 
         for (i, def) in info
             .definitions()
