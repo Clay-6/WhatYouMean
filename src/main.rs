@@ -88,6 +88,10 @@ async fn dym() -> Result<()> {
         if args.phonetics {
             let prons = info.pronunciations();
             if !prons.is_empty() {
+                print!(
+                    "{}",
+                    prons[0].if_supports_color(Stdout, owo_colors::OwoColorize::yellow)
+                );
                 for p in prons.iter().skip(1) {
                     print!(
                         ", {}",
@@ -102,6 +106,40 @@ async fn dym() -> Result<()> {
                         .if_supports_color(Stdout, owo_colors::OwoColorize::red)
                         .italic()
                 );
+            }
+        }
+
+        if args.syllables {
+            let syls = info.syllables();
+            if syls.is_empty() {
+                println!(
+                    "{}\n",
+                    "[No syllables available]"
+                        .if_supports_color(Stdout, owo_colors::OwoColorize::red)
+                        .italic()
+                )
+            } else {
+                print!(
+                    "Syllables: {} {}",
+                    syls[0].text,
+                    if let Some(t) = syls[0].ty.clone() {
+                        format!("({t})")
+                    } else {
+                        String::new()
+                    }
+                );
+                for s in syls.iter().skip(1) {
+                    print!(
+                        " - {} {}",
+                        s.text,
+                        if let Some(t) = s.ty.clone() {
+                            format!("({t})")
+                        } else {
+                            String::new()
+                        }
+                    )
+                }
+                println!("\n")
             }
         }
 

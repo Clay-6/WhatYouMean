@@ -15,6 +15,7 @@ pub struct WordInfo {
     pronunciations: Vec<String>,
     synonyms: Vec<String>,
     antonyms: Vec<String>,
+    syllables: Vec<Syllable>,
 }
 
 /// Info relating to a word's definition
@@ -31,6 +32,13 @@ pub struct Definition {
 pub enum RelationshipType {
     Synonym,
     Antonym,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Syllable {
+    pub text: String,
+    #[serde(rename = "type")]
+    pub ty: Option<String>,
 }
 
 /// Get a [`Vec`] of all a word's available [`Definition`]s
@@ -138,6 +146,18 @@ impl WordInfo {
             .iter()
             .map(|s| s.chars().filter(|&c| c != '"').collect::<String>())
             .collect();
+        let syllables = get_data::<Vec<Syllable>>(
+            client,
+            &format!("{BASE_URL}/word.json/{word}/hyphenation?api_key={key}"),
+        )
+        .await
+        .unwrap_or_default()
+        .iter()
+        .map(|s| Syllable {
+            text: remove_tags(&s.text),
+            ty: s.ty.clone(),
+        })
+        .collect();
 
         Ok(Self {
             word: word.to_owned(),
@@ -145,6 +165,7 @@ impl WordInfo {
             pronunciations,
             synonyms,
             antonyms,
+            syllables,
         })
     }
 
@@ -171,6 +192,10 @@ impl WordInfo {
     /// Get the word's antonyms
     pub fn antonyms(&self) -> &[String] {
         &self.antonyms
+    }
+
+    pub fn syllables(&self) -> &[Syllable] {
+        &self.syllables
     }
 }
 

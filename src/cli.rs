@@ -40,4 +40,7 @@ pub struct Args {
     /// Fetch info for Wordnik's Word of the Day
     #[clap(long)]
     pub wotd: bool,
+    /// Return the syllables for a word
+    #[clap(long)]
+    pub syllables: bool,
 }
