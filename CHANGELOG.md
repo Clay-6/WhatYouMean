@@ -2,7 +2,7 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [Unreleased]
+## [v3.3.0](https://github.com/Clay-6/WhatYouMean/releases/tag/v3.3.0)
 
 ### Added
 
