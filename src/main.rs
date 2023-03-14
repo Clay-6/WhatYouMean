@@ -22,7 +22,7 @@ async fn main() {
         Ok(_) => 0,
         Err(e) => {
             eprintln!(
-                "{}: {}",
+                "{}: {:#}",
                 "Error".if_supports_color(Stderr, OwoColorize::red).bold(),
                 e
             );
