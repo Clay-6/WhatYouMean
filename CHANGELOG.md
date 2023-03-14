@@ -13,6 +13,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 * XML tags appearing in examples
 
+### Changed
+
+* More detailed error display
+
 ## [v3.2.1](https://github.com/Clay-6/WhatYouMean/releases/tag/v3.2.1)
 
 ### Changed
