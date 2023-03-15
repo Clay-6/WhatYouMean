@@ -1,5 +1,8 @@
 # WhatYouMean
 
+![Crates.io](https://img.shields.io/crates/v/whatyoumean?color=purple&style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/Clay-6/WhatYouMean?color=purple&style=for-the-badge)
+
 A CLI dictionary that uses [Wordnik](https://www.wordnik.com) for its info
 
 ## Usage
