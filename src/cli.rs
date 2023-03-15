@@ -1,7 +1,9 @@
 use clap::Parser;
 
 #[derive(Debug, Clone, Parser)]
-#[clap(author, version, about)]
+#[command(name = "WhatYouMean")]
+#[command(author = "Clay66 <clay@clay66.dev>")]
+#[command(version, about, long_about = None)]
 pub struct Args {
     /// The word to see definitions for
     pub word: Option<String>,
