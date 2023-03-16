@@ -205,30 +205,22 @@ impl WordInfo {
 
 impl Definition {
     /// Get the text of a [`Definition`] if it exists
-    pub fn text(&self) -> Option<String> {
-        self.text.clone()
+    pub fn text(&self) -> Option<&str> {
+        self.text.as_ref().map(|t| t.as_ref())
     }
 
     /// Get a [`Definition`]'s
-    pub fn part_of_speech(&self) -> String {
-        self.part_of_speech.clone()
+    pub fn part_of_speech(&self) -> &str {
+        self.part_of_speech.as_ref()
     }
 
     /// Return a word's top example
-    pub fn top_example(&self) -> String {
-        if self.example_uses.is_empty() {
-            "".into()
-        } else {
-            self.example_uses
-                .iter()
-                .map(|e| e.text.clone())
-                .collect::<Vec<_>>()[0]
-                .clone()
-        }
+    pub fn top_example(&self) -> Option<&str> {
+        self.example_uses.first().map(|e| e.text.as_ref())
     }
 
     fn no_pos() -> String {
-        "[None]".into()
+        "[None]".to_owned()
     }
 }
 

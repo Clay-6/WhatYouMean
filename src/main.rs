@@ -137,7 +137,7 @@ async fn dym() -> Result<()> {
             .enumerate()
             .take(args.max)
         {
-            let text = remove_tags(&def.text().unwrap());
+            let text = remove_tags(def.text().unwrap());
             println!(
                 "{} {} - {}",
                 format!("{}.", i + 1)
@@ -148,19 +148,17 @@ async fn dym() -> Result<()> {
                 text
             );
             if args.examples {
-                let example = def.top_example();
-                if example.is_empty() {
+                if let Some(example) = def.top_example() {
+                    println!(
+                        "{}",
+                        format!("e.g. {}", example).if_supports_color(Stdout, OwoColorize::green)
+                    );
+                } else {
                     println!(
                         "{}",
                         "[No example]"
                             .if_supports_color(Stdout, OwoColorize::red)
                             .italic()
-                    );
-                } else {
-                    println!(
-                        "{}",
-                        format!("e.g. {}", def.top_example())
-                            .if_supports_color(Stdout, OwoColorize::green)
                     );
                 }
             }
