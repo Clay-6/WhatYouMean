@@ -219,6 +219,14 @@ impl Definition {
         self.example_uses.first().map(|e| e.text.as_ref())
     }
 
+    pub fn source(&self) -> &str {
+        &self.source_dictionary
+    }
+
+    pub fn attrib_url(&self) -> &str {
+        &self.attribution_url
+    }
+
     fn no_pos() -> String {
         "[None]".to_owned()
     }

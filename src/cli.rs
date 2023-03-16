@@ -45,4 +45,7 @@ pub struct Args {
     /// Return the syllables for a word
     #[clap(long)]
     pub syllables: bool,
+    /// Show the source for each definition
+    #[clap(short = 'S', long)]
+    pub sources: bool,
 }

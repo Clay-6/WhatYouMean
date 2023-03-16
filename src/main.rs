@@ -162,6 +162,12 @@ async fn dym() -> Result<()> {
                     );
                 }
             }
+            println!(
+                "{}",
+                format!("(From {} [{}])", def.source(), def.attrib_url())
+                    .if_supports_color(Stdout, OwoColorize::dimmed)
+                    .italic()
+            );
         }
 
         if args.synonyms {
