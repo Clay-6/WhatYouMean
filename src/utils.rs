@@ -26,6 +26,8 @@ pub struct Definition {
     #[serde(default = "Definition::no_pos")]
     part_of_speech: String,
     example_uses: Vec<Example>,
+    source_dictionary: String,
+    attribution_url: String,
 }
 
 /// Different types of rationships between words
@@ -133,10 +135,9 @@ impl WordInfo {
             get_data::<Vec<Syllable>>(client, &syl_url,)
         );
         let definitions = definitions?
-            .iter()
+            .into_iter()
             .map(|d| Definition {
                 text: d.text.as_ref().map(|text| remove_tags(text)),
-                part_of_speech: d.part_of_speech.clone(),
                 example_uses: d
                     .example_uses
                     .iter()
@@ -144,6 +145,7 @@ impl WordInfo {
                         text: remove_tags(&e.text),
                     })
                     .collect(),
+                ..d
             })
             .collect();
         let pronunciations = pronunciations.unwrap_or_default();
@@ -159,10 +161,10 @@ impl WordInfo {
             .collect();
         let syllables = syllables
             .unwrap_or_default()
-            .iter()
+            .into_iter()
             .map(|s| Syllable {
                 text: remove_tags(&s.text),
-                ty: s.ty.clone(),
+                ..s
             })
             .collect();
 
