@@ -44,7 +44,7 @@ pub struct Syllable {
     ty: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, Display, EnumString, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Display, EnumString, Serialize, Deserialize)]
 #[serde(rename_all(deserialize = "lowercase"))]
 pub enum SourceDict {
     #[strum(serialize = "ahd-5", to_string = "AHD-5")]

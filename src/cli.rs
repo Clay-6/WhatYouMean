@@ -1,5 +1,7 @@
 use clap::Parser;
 
+use crate::utils::SourceDict;
+
 #[derive(Debug, Clone, Parser)]
 #[command(name = "WhatYouMean")]
 #[command(author = "Clay66 <clay@clay66.dev>")]
@@ -48,4 +50,7 @@ pub struct Args {
     /// Show the source for each definition
     #[clap(short = 'S', long)]
     pub sources: bool,
+    // Show results only from the specified source dictionary
+    #[clap(short, long)]
+    pub from: Option<SourceDict>,
 }

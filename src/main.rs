@@ -133,7 +133,14 @@ async fn dym() -> Result<()> {
         for (i, def) in info
             .definitions()
             .iter()
-            .filter(|d| d.text().is_some())
+            .filter(|d| {
+                d.text().is_some()
+                    && if let Some(s) = args.from {
+                        d.source() == s
+                    } else {
+                        true
+                    }
+            })
             .enumerate()
             .take(args.max)
         {
