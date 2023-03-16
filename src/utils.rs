@@ -4,6 +4,7 @@ use color_eyre::{eyre::Result, Report};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use strum::{Display, EnumString};
 
 const BASE_URL: &str = "https://api.wordnik.com/v4";
 
@@ -26,7 +27,7 @@ pub struct Definition {
     #[serde(default = "Definition::no_pos")]
     part_of_speech: String,
     example_uses: Vec<Example>,
-    source_dictionary: String,
+    source_dictionary: SourceDict,
     attribution_url: String,
 }
 
@@ -41,6 +42,24 @@ pub struct Syllable {
     text: String,
     #[serde(rename = "type")]
     ty: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, Display, EnumString, Serialize, Deserialize)]
+#[serde(rename_all(deserialize = "lowercase"))]
+pub enum SourceDict {
+    #[strum(serialize = "ahd-5", to_string = "AHD-5")]
+    #[serde(rename(deserialize = "ahd-5"))]
+    Ahd5,
+    #[strum(ascii_case_insensitive)]
+    Century,
+    #[strum(ascii_case_insensitive, to_string = "GCIDE")]
+    Gcide,
+    #[strum(ascii_case_insensitive)]
+    Wiktionary,
+    #[strum(ascii_case_insensitive)]
+    Webster,
+    #[strum(ascii_case_insensitive)]
+    Wordnet,
 }
 
 /// Get a [`Vec`] of all a word's available [`Definition`]s
@@ -219,8 +238,8 @@ impl Definition {
         self.example_uses.first().map(|e| e.text.as_ref())
     }
 
-    pub fn source(&self) -> &str {
-        &self.source_dictionary
+    pub fn source(&self) -> SourceDict {
+        self.source_dictionary
     }
 
     pub fn attrib_url(&self) -> &str {
