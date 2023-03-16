@@ -32,10 +32,10 @@ pub struct Args {
     /// Show a word's synonyms
     #[clap(short, long)]
     pub synonyms: bool,
-    // Show a word's antonyms
+    /// Show a word's antonyms
     #[clap(short, long)]
     pub antonyms: bool,
-    // Display all available info about a word
+    /// Display all available info about a word
     #[clap(short, long)]
     pub verbose: bool,
     /// Output all data for a word in JSON format
@@ -50,7 +50,9 @@ pub struct Args {
     /// Show the source for each definition
     #[clap(short = 'S', long)]
     pub sources: bool,
-    // Show results only from the specified source dictionary
+    /// Show results only from the specified source dictionary
+    ///
+    /// One of `ahd-5`, `century`, `gcide`, `wiktionary`, `webster`, or `wordnet`
     #[clap(short, long)]
     pub from: Option<SourceDict>,
 }
