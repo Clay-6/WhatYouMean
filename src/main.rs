@@ -43,6 +43,7 @@ async fn dym() -> Result<()> {
             antonyms: true,
             synonyms: true,
             syllables: true,
+            sources: true,
             ..args
         };
     }
