@@ -20,6 +20,11 @@ pub struct Args {
     /// display
     #[clap(long, default_value_t = 10)]
     pub max: usize,
+    /// Display all available definitions for a word
+    /// 
+    /// Will override any value set through `--max`
+    #[clap(long)]
+    pub all: bool,
     /// Disable coloured output
     #[clap(long)]
     pub no_colour: bool,

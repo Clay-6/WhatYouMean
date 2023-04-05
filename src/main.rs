@@ -44,8 +44,13 @@ async fn dym() -> Result<()> {
             synonyms: true,
             syllables: true,
             sources: true,
+            all: true,
             ..args
         };
+    }
+
+    if args.all {
+        args.max = usize::MAX;
     }
 
     if args.no_colour {
