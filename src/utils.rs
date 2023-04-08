@@ -271,7 +271,7 @@ async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Res
         .error_for_status()
         .map_err(|e| e.without_url())?;
 
-    Ok(serde_json::from_str(&res.text().await?)?)
+    Ok(res.json().await?)
 }
 
 impl fmt::Display for RelationshipType {
