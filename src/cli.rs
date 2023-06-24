@@ -21,7 +21,7 @@ pub struct Args {
     #[clap(long, default_value_t = 10)]
     pub max: usize,
     /// Display all available definitions for a word
-    /// 
+    ///
     /// Will override any value set through `--max`
     #[clap(long)]
     pub all: bool,
@@ -60,4 +60,28 @@ pub struct Args {
     /// One of `ahd-5`, `century`, `gcide`, `wiktionary`, `webster`, or `wordnet`
     #[clap(short, long)]
     pub from: Option<SourceDict>,
+}
+
+impl Args {
+    pub fn setup() -> Self {
+        let mut this = Self::parse();
+        if this.verbose {
+            this = Args {
+                phonetics: true,
+                examples: true,
+                antonyms: true,
+                synonyms: true,
+                syllables: true,
+                sources: true,
+                all: true,
+                ..this
+            };
+        }
+
+        if this.all {
+            this.max = usize::MAX;
+        }
+
+        this
+    }
 }

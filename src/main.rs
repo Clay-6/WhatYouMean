@@ -1,7 +1,6 @@
 mod cli;
 mod utils;
 
-use clap::Parser;
 use cli::Args;
 use color_eyre::eyre::{eyre, Result};
 use owo_colors::{
@@ -18,7 +17,7 @@ async fn main() {
         std::process::exit(1)
     }
 
-    std::process::exit(match dym().await {
+    std::process::exit(match wym().await {
         Ok(_) => 0,
         Err(e) => {
             eprintln!(
@@ -32,26 +31,9 @@ async fn main() {
 }
 
 /// Run the actual application
-async fn dym() -> Result<()> {
-    let mut args = Args::parse();
+async fn wym() -> Result<()> {
+    let args = Args::setup();
     let client = Client::new();
-
-    if args.verbose {
-        args = Args {
-            phonetics: true,
-            examples: true,
-            antonyms: true,
-            synonyms: true,
-            syllables: true,
-            sources: true,
-            all: true,
-            ..args
-        };
-    }
-
-    if args.all {
-        args.max = usize::MAX;
-    }
 
     if args.no_colour {
         owo_colors::set_override(false);
