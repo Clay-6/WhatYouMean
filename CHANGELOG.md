@@ -8,6 +8,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 * `--all` to show all available definitions
 
+### Changed
+
+* Updated dependencies
+
 ## [v3.4.0](https://github.com/Clay-6/WhatYouMean/releases/tag/v3.4.0)
 
 ### Added
