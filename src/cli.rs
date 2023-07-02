@@ -23,7 +23,7 @@ pub struct Args {
     /// Display all available definitions for a word
     ///
     /// Will override any value set through `--max`
-    #[clap(long)]
+    #[clap(long, short = 'A')]
     pub all: bool,
     /// Disable coloured output
     #[clap(long)]
