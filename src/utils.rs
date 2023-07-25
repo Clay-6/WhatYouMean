@@ -133,7 +133,7 @@ pub async fn get_related(
     let val = get_data::<Value>(client, &url).await?;
     Ok(val[0]["words"]
         .as_array()
-        .unwrap()
+        .unwrap() // This field is definitely an array
         .iter()
         .map(|w| w.to_string())
         .collect())
