@@ -63,7 +63,11 @@ pub enum SourceDict {
 }
 
 /// Get a [`Vec`] of all a word's available [`Definition`]s
-pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<Vec<Definition>> {
+pub async fn get_definitions(
+    client: &Client,
+    word: &str,
+    key: &str,
+) -> reqwest::Result<Vec<Definition>> {
     get_data::<Vec<Definition>>(
         client,
         &format!("{BASE_URL}/word.json/{word}/definitions?api_key={key}"),
@@ -72,7 +76,7 @@ pub async fn get_definitions(client: &Client, word: &str, key: &str) -> Result<V
 }
 
 /// Get a random word
-pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
+pub async fn get_random_word(client: &Client, key: &str) -> reqwest::Result<String> {
     let data = get_data::<Value>(
         client,
         &format!("{BASE_URL}/words.json/randomWord?api_key={key}"),
@@ -85,7 +89,7 @@ pub async fn get_random_word(client: &Client, key: &str) -> Result<String> {
         .collect())
 }
 
-pub async fn get_wotd(client: &Client, key: &str) -> Result<String> {
+pub async fn get_wotd(client: &Client, key: &str) -> reqwest::Result<String> {
     let data = get_data::<Value>(
         client,
         &format!("{BASE_URL}/words.json/wordOfTheDay?api_key={key}"),
@@ -122,7 +126,7 @@ pub async fn get_related(
     word: &str,
     key: &str,
     rel_type: RelationshipType,
-) -> Result<Vec<String>> {
+) -> reqwest::Result<Vec<String>> {
     let url = format!(
         "{BASE_URL}/word.json/{word}/relatedWords?&relationshipTypes={rel_type}&api_key={key}",
     );
@@ -263,7 +267,7 @@ struct Example {
     text: String,
 }
 
-async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Result<T> {
+async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> reqwest::Result<T> {
     let res = client
         .get(url)
         .send()
@@ -271,7 +275,7 @@ async fn get_data<T: for<'a> Deserialize<'a>>(client: &Client, url: &str) -> Res
         .error_for_status()
         .map_err(|e| e.without_url())?;
 
-    Ok(res.json().await?)
+    res.json().await
 }
 
 impl fmt::Display for RelationshipType {
